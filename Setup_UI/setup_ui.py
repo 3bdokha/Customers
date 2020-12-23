@@ -1,4 +1,4 @@
-from PyQt5 import QtCore
+from PyQt5 import QtGui
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QTableWidgetItem, QMessageBox, QScrollBar
 from Layouts.main_ui import Ui_MainWindow
 from Threads import threads as th
@@ -19,7 +19,8 @@ class MainForm(QMainWindow, Ui_MainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
         self.setupUi(self)
-
+        self.setWindowIcon(QtGui.QIcon('Assets\\icon.ico'))
+        self.setWindowTitle('Customers - Main Window')
         # self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
 
         self.starting_thread()

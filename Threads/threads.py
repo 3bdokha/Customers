@@ -1,4 +1,5 @@
 import time
+from shutil import copy2
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
 import numpy as np
 import os
@@ -6,8 +7,10 @@ import gspread
 import pandas as pd
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
+from openpyxl import load_workbook
 
 temp_path = os.path.join(os.path.expanduser('~'), 'Documents\\Customers')
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 online = 'متصل'
 offline = 'غير متصل'
@@ -18,13 +21,16 @@ if not os.path.exists(temp_path):
     os.makedirs(temp_path)
     pd.DataFrame().to_csv(os.path.join(temp_path, 'temp.csv'), index=False, header=False,
                           encoding='utf-8-sig')
-elif not os.path.exists(os.path.join(temp_path, 'temp.csv')):
+if not os.path.exists(os.path.join(temp_path, 'temp.csv')):
     pd.DataFrame().to_csv(os.path.join(temp_path, 'temp.csv'), index=False, header=False,
                           encoding='utf-8-sig')
 
-elif not os.path.exists(os.path.join(temp_path, 'cate.csv')):
+if not os.path.exists(os.path.join(temp_path, 'cate.csv')):
     pd.DataFrame().to_csv(os.path.join(temp_path, 'temp.csv'), index=False, header=False,
                           encoding='utf-8-sig')
+
+if not os.path.exists(os.path.join(temp_path, 'Customer Form.xlsx')):
+    copy2(os.path.join(BASE_DIR, 'Customer Form.xlsx'), temp_path)
 
 
 def read_temp():
@@ -138,3 +144,42 @@ class GetData(QThread):
                 self.data.emit(cust, cate, INTERNET)
             print(INTERNET, datetime.time(datetime.now()))
             time.sleep(3)
+
+
+class PrintCustomer(QThread):
+    customer = None
+    prev_mode = True
+    error = pyqtSignal(object)
+
+    def run(self):
+        try:
+            form_path = os.path.join(temp_path, 'Customer Form.xlsx')
+
+            wb = load_workbook(form_path)
+
+            # grab the active worksheet
+            ws = wb.active
+
+            # Data can be assigned directly to cells
+            ws['D1'] = self.customer['name'].values[-1]
+            ws['E3'] = self.customer['sales_p'].values[-1]
+            ws['E4'] = self.customer['admin'].values[-1]
+            ws['E5'] = self.customer['address'].values[-1]
+            ws['E6'] = f"0{self.customer['phone1'].values[-1]}" if self.customer['phone1'].values[-1] != '' else ''
+            ws['H6'] = f"0{self.customer['phone2'].values[-1]}" if self.customer['phone2'].values[-1] != '' else ''
+            ws['K6'] = f"0{self.customer['phone3'].values[-1]}" if self.customer['phone3'].values[-1] != '' else ''
+            ws['E7'] = self.customer['e_mail'].values[-1]
+            ws['E8'] = self.customer['cust_type'].values[-1]
+            ws['E9'] = self.customer['size'].values[-1]
+            ws['E10'] = str(self.customer['yarn_cate'].values[-1])
+            ws['E11'] = str(self.customer['omega_cate'].values[-1])
+            ws['E12'] = str(self.customer['factory_cate'].values[-1])
+
+            # Save the file
+            wb.save(form_path)
+            if self.prev_mode:
+                os.startfile(form_path)
+            else:
+                os.startfile(form_path, 'print')
+        except Exception as e:
+            self.error.emit(str(e))
