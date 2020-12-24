@@ -1,4 +1,4 @@
-from PyQt5 import QtGui
+from PyQt5 import QtGui, QtCore
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QMessageBox
 from Layouts.details_ui import Ui_details
@@ -10,10 +10,19 @@ class DetailsDialog(QDialog, Ui_details):
         QDialog.__init__(self)
         self.setupUi(self)
         self.setWindowIcon(QtGui.QIcon('Assets\\icon.ico'))
-        self.btnPrint.clicked.connect(self.print_customer)
-        self.btnPrev.clicked.connect(self.prev_customer)
-
+        self.btnEdit.clicked.connect(self.setup_edit_mode)
+        self.mode = 'v'
         self.customer = None
+        self.sheet_index = None
+
+        self.fYarn.setVisible(False)
+        self.fOmega.setVisible(False)
+        self.fCloth.setVisible(False)
+
+        if self.mode == 'v':
+            self.setup_view_mode()
+        elif self.mode == 'e':
+            self.setup_edit_mode()
 
     def set_data(self):
         # print(self.customer['name'].values[-1])
@@ -56,6 +65,68 @@ class DetailsDialog(QDialog, Ui_details):
         thread.customer = self.customer
         thread.error.connect(self.thread_error)
         thread.start()
+
+    def setup_edit_mode(self):
+        # self.lblName.setReadOnly(False)
+        self.txtSlaesP.setReadOnly(False)
+        self.txtAdmin.setReadOnly(False)
+        self.txtAdrress.setReadOnly(False)
+        self.txtMail.setReadOnly(False)
+        self.txtPhone1.setReadOnly(False)
+        self.txtPhone2.setReadOnly(False)
+        self.txtPhone3.setReadOnly(False)
+        self.txtPhone4.setReadOnly(False)
+        self.txtCustType.setReadOnly(False)
+        self.txtSize.setReadOnly(False)
+
+        self.fYarn.setVisible(True)
+        self.fOmega.setVisible(True)
+        self.fCloth.setVisible(True)
+
+        self.btnSave.setVisible(True)
+        self.btnCancle.setVisible(True)
+
+        self.btnPrint.setVisible(False)
+        self.btnPrev.setVisible(False)
+
+        self.cbYarn.setEnabled(True)
+        self.cbOmega.setEnabled(True)
+        self.cbCloth.setEnabled(True)
+
+        self.btnCancle.clicked.connect(self.cancel_editing)
+
+    def setup_view_mode(self):
+        self.txtSlaesP.setReadOnly(True)
+        self.txtAdmin.setReadOnly(True)
+        self.txtAdrress.setReadOnly(True)
+        self.txtMail.setReadOnly(True)
+        self.txtPhone1.setReadOnly(True)
+        self.txtPhone2.setReadOnly(True)
+        self.txtPhone3.setReadOnly(True)
+        self.txtPhone4.setReadOnly(True)
+        self.txtCustType.setReadOnly(True)
+        self.txtSize.setReadOnly(True)
+
+        self.btnSave.setVisible(False)
+        self.btnCancle.setVisible(False)
+
+        self.btnPrint.setVisible(True)
+        self.btnPrev.setVisible(True)
+
+        self.fYarn.setVisible(False)
+        self.fOmega.setVisible(False)
+        self.fCloth.setVisible(False)
+
+        self.cbYarn.setEnabled(False)
+        self.cbOmega.setEnabled(False)
+        self.cbCloth.setEnabled(False)
+
+        self.btnPrint.clicked.connect(self.print_customer)
+        self.btnPrev.clicked.connect(self.prev_customer)
+
+    def cancel_editing(self):
+        self.setup_view_mode()
+        self.set_data()
 
     def thread_error(self, error):
         QMessageBox.warning(self, 'ERROR!', error)

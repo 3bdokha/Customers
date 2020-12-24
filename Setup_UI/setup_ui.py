@@ -143,7 +143,9 @@ class MainForm(QMainWindow, Ui_MainWindow):
         index = self.twResalt.currentRow()
         code = int(self.twResalt.item(index, 0).text())
 
-        self.details.customer = self.customers[self.customers['i'] == code]
+        self.details.customer = self.customers[self.customers['i'] == int(code)]
+        self.details.sheet_index = self.customers[self.customers['i'] == int(code)].index[-1] + 2
+        self.details.mode = 'v'
         self.details.set_data()
         self.details.show()
 
