@@ -781,6 +781,7 @@ class Ui_MainWindow(object):
 "\n"
 "\n"
 "")
+        self.twResalt.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
         self.twResalt.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.twResalt.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.twResalt.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
@@ -1400,10 +1401,16 @@ class Ui_MainWindow(object):
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1307, 21))
         self.menubar.setObjectName("menubar")
+        self.menuFile = QtWidgets.QMenu(self.menubar)
+        self.menuFile.setObjectName("menuFile")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
+        self.actionNew_Customer = QtWidgets.QAction(MainWindow)
+        self.actionNew_Customer.setObjectName("actionNew_Customer")
+        self.menuFile.addAction(self.actionNew_Customer)
+        self.menubar.addAction(self.menuFile.menuAction())
 
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(0)
@@ -1456,6 +1463,8 @@ class Ui_MainWindow(object):
         self.label_25.setText(_translate("MainWindow", "مسئول المبيعات"))
         self.btnReset.setText(_translate("MainWindow", "تفريغ"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "البحث"))
+        self.menuFile.setTitle(_translate("MainWindow", "File"))
+        self.actionNew_Customer.setText(_translate("MainWindow", "New Customer"))
 
 
 if __name__ == "__main__":

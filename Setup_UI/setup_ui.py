@@ -1,5 +1,5 @@
 from PyQt5 import QtGui
-from PyQt5.QtWidgets import QMainWindow, QFileDialog, QTableWidgetItem, QMessageBox, QScrollBar
+from PyQt5.QtWidgets import QMainWindow, QFileDialog, QTableWidgetItem, QMessageBox, QScrollBar, QHeaderView
 from Layouts.main_ui import Ui_MainWindow
 from Threads import threads as th
 from Dialogs.details_dialog import DetailsDialog
@@ -13,6 +13,8 @@ class MainForm(QMainWindow, Ui_MainWindow):
     len_row = 0
     customers = None
     categories = None
+    sheet_customers = None
+    first = True
 
     d_header = ['i', 'name', 'phone1', 'phone2', 'address', 'sales_p']
 
@@ -21,6 +23,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.setWindowIcon(QtGui.QIcon('Assets\\icon.ico'))
         self.setWindowTitle('Customers - Main Window')
+
         # self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
 
         self.starting_thread()
@@ -30,6 +33,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.comAdmin_P.currentTextChanged.connect(self.filter)
         self.twResalt.itemDoubleClicked.connect(self.on_click_item)
         self.btnReset.clicked.connect(self.reset)
+        self.actionNew_Customer.triggered.connect(self.new_customer)
 
         # Filter by company
         self.cbColth.stateChanged.connect(self.filter)
@@ -76,8 +80,6 @@ class MainForm(QMainWindow, Ui_MainWindow):
 
         self.btnRefresh.clicked.connect(self.fill_controls)
 
-        self.details = DetailsDialog()
-
     def starting_thread(self):
         thread = th.GetAuth(self)
         thread.auth.connect(self.get_auth)
@@ -96,13 +98,16 @@ class MainForm(QMainWindow, Ui_MainWindow):
     def thread_error(self, error):
         QMessageBox.warning(self, 'ERROR!', error)
 
-    def get_data(self, customers, categories, internet):
+    def get_data(self, customers, categories, sheet_customers, internet):
         self.customers = customers
         self.categories = categories
+        self.sheet_customers = sheet_customers
         self.lblInternet.setText(internet)
 
         if not self.comName.isEnabled():
             self.fill_controls()
+        else:
+            self.filter()
 
         self.comName.setEnabled(1)
         self.comPhone.setEnabled(1)
@@ -129,11 +134,11 @@ class MainForm(QMainWindow, Ui_MainWindow):
                 for row in range(len(data)):
                     for column in range(len_columns):
                         self.twResalt.setItem(row, column, QTableWidgetItem(str(data[row][column])))
-
-            self.twResalt.resizeColumnsToContents()
-            self.twResalt.resizeRowsToContents()
-            header = self.twResalt.horizontalHeader()
-            header.setStretchLastSection(True)
+            if self.first:
+                self.twResalt.resizeColumnsToContents()
+                self.twResalt.resizeRowsToContents()
+                self.first = 0
+            self.twResalt.horizontalHeader()
         else:
             self.twResalt.setRowCount(len(data))
 
@@ -142,11 +147,22 @@ class MainForm(QMainWindow, Ui_MainWindow):
     def on_click_item(self):
         index = self.twResalt.currentRow()
         code = int(self.twResalt.item(index, 0).text())
-
+        self.details = DetailsDialog()
         self.details.customer = self.customers[self.customers['i'] == int(code)]
-        self.details.sheet_index = self.customers[self.customers['i'] == int(code)].index[-1] + 2
+        self.details.sheet_row_index = self.customers[self.customers['i'] == int(code)].index[-1] + 2
+        self.details.categories = self.categories
+        self.details.sheet_customers = self.sheet_customers
         self.details.mode = 'v'
+        self.details.setup_edit_view_mode(e_mode=False)
         self.details.set_data()
+        self.details.show()
+
+    def new_customer(self):
+        self.details = DetailsDialog()
+        self.details.categories = self.categories
+        self.details.sheet_customers = self.sheet_customers
+        self.details.mode = 'n'
+        self.details.setup_edit_view_mode(e_mode=True)
         self.details.show()
 
     def filter(self):

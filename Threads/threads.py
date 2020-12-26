@@ -57,7 +57,7 @@ def read_temp():
 class GetAuth(QThread):
     auth = pyqtSignal(object)
     error = pyqtSignal(object)
-    off_data = pyqtSignal(object, object, str)
+    off_data = pyqtSignal(object, object, object, str)
 
     def run(self):
         no_internet = True
@@ -85,7 +85,7 @@ class GetAuth(QThread):
                     first = 0
 
                 cust, cate = read_temp()
-                self.off_data.emit(cust, cate, INTERNET)
+                self.off_data.emit(cust, cate, None, INTERNET)
 
                 time.sleep(5)
             print(INTERNET, datetime.time(datetime.now()))
@@ -93,7 +93,7 @@ class GetAuth(QThread):
 
 class GetData(QThread):
     sheet = None
-    data = pyqtSignal(object, object, str)
+    data = pyqtSignal(object, object, object, str)
     error = pyqtSignal(object, object)
 
     def run(self):
@@ -133,7 +133,7 @@ class GetData(QThread):
                         x]].values)
 
                 INTERNET = online
-                self.data.emit(customers, categories, INTERNET)
+                self.data.emit(customers, categories, None, INTERNET)
 
                 customers.to_csv(os.path.join(temp_path, 'temp.csv'), index=False, encoding='utf-8-sig')
                 categories.to_csv(os.path.join(temp_path, 'cate.csv'), encoding='utf-8-sig')
@@ -141,7 +141,7 @@ class GetData(QThread):
                 INTERNET = offline
                 cust, cate = read_temp()
 
-                self.data.emit(cust, cate, INTERNET)
+                self.data.emit(cust, cate, sheet_customers, INTERNET)
             print(INTERNET, datetime.time(datetime.now()))
             time.sleep(3)
 

@@ -837,13 +837,21 @@ class Ui_details(object):
         self.btnEdit = QtWidgets.QToolButton(self.groupBox_13)
         self.btnEdit.setObjectName("btnEdit")
         self.horizontalLayout_11.addWidget(self.btnEdit)
-        self.lblName = QtWidgets.QLabel(self.groupBox_13)
+        self.lblName = QtWidgets.QLineEdit(self.groupBox_13)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.lblName.sizePolicy().hasHeightForWidth())
+        self.lblName.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setPointSize(28)
         font.setBold(True)
         font.setWeight(75)
         self.lblName.setFont(font)
+        self.lblName.setStyleSheet(" background-color:rgba(66,66,66,0%);\n"
+"")
         self.lblName.setAlignment(QtCore.Qt.AlignCenter)
+        self.lblName.setReadOnly(True)
         self.lblName.setObjectName("lblName")
         self.horizontalLayout_11.addWidget(self.lblName)
         self.verticalLayout_6.addWidget(self.groupBox_13)
@@ -861,6 +869,26 @@ class Ui_details(object):
         self.groupBox_4.setObjectName("groupBox_4")
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.groupBox_4)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+        self.comSalesP = QtWidgets.QComboBox(self.groupBox_4)
+        font = QtGui.QFont()
+        font.setPointSize(-1)
+        font.setBold(True)
+        font.setWeight(75)
+        self.comSalesP.setFont(font)
+        self.comSalesP.setStyleSheet("background-color: #D7CCC8;\n"
+"border-width: 1px;\n"
+"border-color: #1e1e1e;\n"
+"border-radius: 6;\n"
+"padding: 3px;\n"
+"padding-left: 5px;\n"
+"padding-right: 5px;\n"
+"font-size: 17px;\n"
+"font-weight: bold;")
+        self.comSalesP.setEditable(True)
+        self.comSalesP.setInsertPolicy(QtWidgets.QComboBox.NoInsert)
+        self.comSalesP.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToMinimumContentsLengthWithIcon)
+        self.comSalesP.setObjectName("comSalesP")
+        self.horizontalLayout_3.addWidget(self.comSalesP)
         self.txtSlaesP = QtWidgets.QLineEdit(self.groupBox_4)
         self.txtSlaesP.setEnabled(True)
         font = QtGui.QFont()
@@ -877,6 +905,8 @@ class Ui_details(object):
         self.label_9.setFont(font)
         self.label_9.setObjectName("label_9")
         self.horizontalLayout_3.addWidget(self.label_9)
+        self.horizontalLayout_3.setStretch(0, 1)
+        self.horizontalLayout_3.setStretch(1, 1)
         self.verticalLayout_5.addWidget(self.groupBox_4)
         self.groupBox_20 = QtWidgets.QGroupBox(self.groupBox_54)
         self.groupBox_20.setStyleSheet("QGroupBox{\n"
@@ -1006,6 +1036,26 @@ class Ui_details(object):
         self.groupBox_52.setObjectName("groupBox_52")
         self.horizontalLayout_38 = QtWidgets.QHBoxLayout(self.groupBox_52)
         self.horizontalLayout_38.setObjectName("horizontalLayout_38")
+        self.comCustType = QtWidgets.QComboBox(self.groupBox_52)
+        font = QtGui.QFont()
+        font.setPointSize(-1)
+        font.setBold(True)
+        font.setWeight(75)
+        self.comCustType.setFont(font)
+        self.comCustType.setStyleSheet("background-color: #D7CCC8;\n"
+"border-width: 1px;\n"
+"border-color: #1e1e1e;\n"
+"border-radius: 6;\n"
+"padding: 3px;\n"
+"padding-left: 5px;\n"
+"padding-right: 5px;\n"
+"font-size: 17px;\n"
+"font-weight: bold;")
+        self.comCustType.setEditable(True)
+        self.comCustType.setInsertPolicy(QtWidgets.QComboBox.NoInsert)
+        self.comCustType.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToMinimumContentsLengthWithIcon)
+        self.comCustType.setObjectName("comCustType")
+        self.horizontalLayout_38.addWidget(self.comCustType)
         self.txtCustType = QtWidgets.QLineEdit(self.groupBox_52)
         font = QtGui.QFont()
         font.setPointSize(14)
@@ -1021,6 +1071,8 @@ class Ui_details(object):
         self.label_40.setFont(font)
         self.label_40.setObjectName("label_40")
         self.horizontalLayout_38.addWidget(self.label_40)
+        self.horizontalLayout_38.setStretch(0, 1)
+        self.horizontalLayout_38.setStretch(1, 1)
         self.verticalLayout_5.addWidget(self.groupBox_52)
         self.groupBox_25 = QtWidgets.QGroupBox(self.groupBox_54)
         self.groupBox_25.setStyleSheet("QGroupBox{\n"
@@ -1030,6 +1082,26 @@ class Ui_details(object):
         self.groupBox_25.setObjectName("groupBox_25")
         self.horizontalLayout_17 = QtWidgets.QHBoxLayout(self.groupBox_25)
         self.horizontalLayout_17.setObjectName("horizontalLayout_17")
+        self.comSize = QtWidgets.QComboBox(self.groupBox_25)
+        font = QtGui.QFont()
+        font.setPointSize(-1)
+        font.setBold(True)
+        font.setWeight(75)
+        self.comSize.setFont(font)
+        self.comSize.setStyleSheet("background-color: #D7CCC8;\n"
+"border-width: 1px;\n"
+"border-color: #1e1e1e;\n"
+"border-radius: 6;\n"
+"padding: 3px;\n"
+"padding-left: 5px;\n"
+"padding-right: 5px;\n"
+"font-size: 17px;\n"
+"font-weight: bold;")
+        self.comSize.setEditable(True)
+        self.comSize.setInsertPolicy(QtWidgets.QComboBox.NoInsert)
+        self.comSize.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToMinimumContentsLengthWithIcon)
+        self.comSize.setObjectName("comSize")
+        self.horizontalLayout_17.addWidget(self.comSize)
         self.txtSize = QtWidgets.QLineEdit(self.groupBox_25)
         font = QtGui.QFont()
         font.setPointSize(14)
@@ -1045,6 +1117,8 @@ class Ui_details(object):
         self.label_24.setFont(font)
         self.label_24.setObjectName("label_24")
         self.horizontalLayout_17.addWidget(self.label_24)
+        self.horizontalLayout_17.setStretch(0, 1)
+        self.horizontalLayout_17.setStretch(1, 1)
         self.verticalLayout_5.addWidget(self.groupBox_25)
         self.verticalLayout_6.addWidget(self.groupBox_54)
         self.groupBox_16 = QtWidgets.QGroupBox(details)

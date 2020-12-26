@@ -10,26 +10,52 @@ class DetailsDialog(QDialog, Ui_details):
         QDialog.__init__(self)
         self.setupUi(self)
         self.setWindowIcon(QtGui.QIcon('Assets\\icon.ico'))
-        self.btnEdit.clicked.connect(self.setup_edit_mode)
+        self.btnEdit.clicked.connect(lambda: self.setup_edit_view_mode(e_mode=True))
+
+        self.btnYarn.clicked.connect(lambda: self.add_cate(self.comYarn, 'yarn', self.twYarn))
+        self.btnOmega.clicked.connect(lambda: self.add_cate(self.comOmega, 'omega', self.twOmega))
+        self.btnCloth.clicked.connect(lambda: self.add_cate(self.comCloth, 'cloth', self.twCloth))
+
+        self.twYarn.itemDoubleClicked.connect(lambda: self.del_cate(self.twYarn, 'yarn'))
+        self.twOmega.itemDoubleClicked.connect(lambda: self.del_cate(self.twOmega, 'omega'))
+        self.twCloth.itemDoubleClicked.connect(lambda: self.del_cate(self.twCloth, 'cloth'))
+        self.btnSave.clicked.connect(self.save_)
+
+        self.btnPrint.clicked.connect(self.print_customer)
+        self.btnPrev.clicked.connect(self.prev_customer)
+
         self.mode = 'v'
         self.customer = None
-        self.sheet_index = None
+        self.sheet_row_index = None
+        self.categories = None
+        self.sheet_customers = None
 
-        self.fYarn.setVisible(False)
-        self.fOmega.setVisible(False)
-        self.fCloth.setVisible(False)
+        self.cate_yarn = []
+        self.cate_omega = []
+        self.cate_cloth = []
 
-        if self.mode == 'v':
-            self.setup_view_mode()
-        elif self.mode == 'e':
-            self.setup_edit_mode()
+        self.cates = {'yarn': self.cate_yarn,
+                      'omega': self.cate_omega,
+                      'cloth': self.cate_cloth
+                      }
+
+        self.row_yarn = 0
+        self.row_omega = 0
+        self.row_cloth = 0
+
+        self.rows = {'yarn': self.row_yarn,
+                     'omega': self.row_omega,
+                     'cloth': self.row_cloth
+                     }
 
     def set_data(self):
-        # print(self.customer['name'].values[-1])
         self.setWindowTitle(f"Details - {self.customer['name'].values[-1]}")
 
         self.lblName.setText(self.customer['name'].values[-1])
+
         self.txtSlaesP.setText(self.customer['sales_p'].values[-1])
+        self.comSalesP.setCurrentText(self.customer['sales_p'].values[-1])
+
         self.txtAdmin.setText(self.customer['admin'].values[-1])
         self.txtAdrress.setText(self.customer['address'].values[-1])
         self.txtMail.setText(self.customer['e_mail'].values[-1])
@@ -43,15 +69,21 @@ class DetailsDialog(QDialog, Ui_details):
             f"0{self.customer['phone4'].values[-1]}" if self.customer['phone4'].values[-1] != '' else '')
 
         self.txtCustType.setText(self.customer['cust_type'].values[-1])
+        self.comCustType.setCurrentText(self.customer['cust_type'].values[-1])
+
         self.txtSize.setText(self.customer['size'].values[-1])
+        self.comSize.setCurrentText(self.customer['size'].values[-1])
 
         self.cbYarn.setChecked(True if self.customer['yarn'].values[-1] == 1 else False)
         self.cbOmega.setChecked(True if self.customer['omega'].values[-1] == 1 else False)
         self.cbCloth.setChecked(True if self.customer['factory'].values[-1] == 1 else False)
 
-        self.fill_table(data=self.customer['yarn_cate'].values[-1], obj=self.twYarn)
-        self.fill_table(data=self.customer['omega_cate'].values[-1], obj=self.twOmega)
-        self.fill_table(data=self.customer['factory_cate'].values[-1], obj=self.twCloth)
+        self.fill_table(data=self.customer['yarn_cate'].values[-1], obj=self.twYarn,
+                        len_rows=len(self.customer['yarn_cate'].values[-1]), cate_name='yarn')
+        self.fill_table(data=self.customer['omega_cate'].values[-1], obj=self.twOmega,
+                        len_rows=len(self.customer['omega_cate'].values[-1]), cate_name='omega')
+        self.fill_table(data=self.customer['factory_cate'].values[-1], obj=self.twCloth,
+                        len_rows=len(self.customer['factory_cate'].values[-1]), cate_name='cloth')
 
     def print_customer(self):
         thread = PrintCustomer(self)
@@ -66,87 +98,150 @@ class DetailsDialog(QDialog, Ui_details):
         thread.error.connect(self.thread_error)
         thread.start()
 
-    def setup_edit_mode(self):
-        # self.lblName.setReadOnly(False)
-        self.txtSlaesP.setReadOnly(False)
-        self.txtAdmin.setReadOnly(False)
-        self.txtAdrress.setReadOnly(False)
-        self.txtMail.setReadOnly(False)
-        self.txtPhone1.setReadOnly(False)
-        self.txtPhone2.setReadOnly(False)
-        self.txtPhone3.setReadOnly(False)
-        self.txtPhone4.setReadOnly(False)
-        self.txtCustType.setReadOnly(False)
-        self.txtSize.setReadOnly(False)
+    def setup_edit_view_mode(self, e_mode=True):
 
-        self.fYarn.setVisible(True)
-        self.fOmega.setVisible(True)
-        self.fCloth.setVisible(True)
+        self.lblName.setReadOnly(not e_mode)
+        self.txtSlaesP.setReadOnly(not e_mode)
+        self.txtAdmin.setReadOnly(not e_mode)
+        self.txtAdrress.setReadOnly(not e_mode)
+        self.txtMail.setReadOnly(not e_mode)
+        self.txtPhone1.setReadOnly(not e_mode)
+        self.txtPhone2.setReadOnly(not e_mode)
+        self.txtPhone3.setReadOnly(not e_mode)
+        self.txtPhone4.setReadOnly(not e_mode)
+        self.txtCustType.setReadOnly(not e_mode)
+        self.txtSize.setReadOnly(not e_mode)
 
-        self.btnSave.setVisible(True)
-        self.btnCancle.setVisible(True)
+        self.fYarn.setVisible(e_mode)
+        self.fOmega.setVisible(e_mode)
+        self.fCloth.setVisible(e_mode)
 
-        self.btnPrint.setVisible(False)
-        self.btnPrev.setVisible(False)
+        self.btnSave.setVisible(e_mode)
+        self.btnCancle.setVisible(e_mode)
 
-        self.cbYarn.setEnabled(True)
-        self.cbOmega.setEnabled(True)
-        self.cbCloth.setEnabled(True)
+        self.btnPrint.setVisible(not e_mode)
+        self.btnPrev.setVisible(not e_mode)
 
-        self.btnCancle.clicked.connect(self.cancel_editing)
+        self.cbYarn.setEnabled(e_mode)
+        self.cbOmega.setEnabled(e_mode)
+        self.cbCloth.setEnabled(e_mode)
 
-    def setup_view_mode(self):
-        self.txtSlaesP.setReadOnly(True)
-        self.txtAdmin.setReadOnly(True)
-        self.txtAdrress.setReadOnly(True)
-        self.txtMail.setReadOnly(True)
-        self.txtPhone1.setReadOnly(True)
-        self.txtPhone2.setReadOnly(True)
-        self.txtPhone3.setReadOnly(True)
-        self.txtPhone4.setReadOnly(True)
-        self.txtCustType.setReadOnly(True)
-        self.txtSize.setReadOnly(True)
+        self.comSalesP.setVisible(e_mode)
+        self.comCustType.setVisible(e_mode)
+        self.comSize.setVisible(e_mode)
 
-        self.btnSave.setVisible(False)
-        self.btnCancle.setVisible(False)
+        self.txtSlaesP.setVisible(not e_mode)
+        self.txtCustType.setVisible(not e_mode)
+        self.txtSize.setVisible(not e_mode)
 
-        self.btnPrint.setVisible(True)
-        self.btnPrev.setVisible(True)
+        self.fill_combos()
 
-        self.fYarn.setVisible(False)
-        self.fOmega.setVisible(False)
-        self.fCloth.setVisible(False)
-
-        self.cbYarn.setEnabled(False)
-        self.cbOmega.setEnabled(False)
-        self.cbCloth.setEnabled(False)
-
-        self.btnPrint.clicked.connect(self.print_customer)
-        self.btnPrev.clicked.connect(self.prev_customer)
+        if self.mode == 'v':
+            self.btnCancle.clicked.connect(self.cancel_editing)
+        else:
+            self.btnEdit.setVisible(False)
+            self.btnCancle.clicked.connect(lambda: self.close())
 
     def cancel_editing(self):
-        self.setup_view_mode()
+        self.setup_edit_view_mode(e_mode=False)
         self.set_data()
 
     def thread_error(self, error):
         QMessageBox.warning(self, 'ERROR!', error)
 
-    @staticmethod
-    def fill_table(data=None, obj=None):
+    def fill_table(self, data=None, obj=None, len_rows=0, cate_name=''):
+        self.rows[cate_name] = len_rows
+        self.cates[cate_name] = []
         # Create table
         len_columns = 1
         obj.setColumnCount(len_columns)
         if data is not None:
-            obj.setRowCount(len(data))
+            obj.setRowCount(len_rows)
         obj.setHorizontalHeaderLabels(['الاصناف'])
-        obj.resizeColumnsToContents()
-        obj.resizeRowsToContents()
         header = obj.horizontalHeader()
         header.setStretchLastSection(True)
 
         if data is not None:
             if len(data) > 0:
-                for row in range(len(data)):
+                for row in range(len_rows):
                     item = QTableWidgetItem(str(data[row]))
                     item.setTextAlignment(Qt.AlignHCenter)
                     obj.setItem(row, 0, item)
+                    self.cates[cate_name].append(
+                        f"{self.categories[self.categories[cate_name] == str(data[row])].index[-1]},")
+
+    @staticmethod
+    def fill_table_new(data=None, obj=None, len_rows=0):
+        # Create table
+        len_columns = 1
+        obj.setColumnCount(len_columns)
+        if data is not None:
+            obj.setRowCount(len_rows)
+        obj.setHorizontalHeaderLabels(['الاصناف'])
+        header = obj.horizontalHeader()
+        header.setStretchLastSection(True)
+
+        if data is not None:
+            if len(data) > 0:
+                item = QTableWidgetItem(str(data))
+                item.setTextAlignment(Qt.AlignHCenter)
+                obj.setItem(len_rows - 1, 0, item)
+
+    def fill_combos(self):
+        if self.categories is not None:
+            self.comYarn.clear()
+            self.comYarn.addItem('')
+            self.comYarn.addItems(self.categories['yarn'].values)
+
+            self.comOmega.clear()
+            self.comOmega.addItem('')
+            self.comOmega.addItems(self.categories['omega'].values)
+
+            self.comCloth.clear()
+            self.comCloth.addItem('')
+            self.comCloth.addItems(self.categories['cloth'].values)
+
+    def add_cate(self, com_obj, cate_name, tw_obj):
+        cate = com_obj.currentText()
+        if cate != '':
+            if len(self.cates[cate_name]) > 0 and self.categories[self.categories[cate_name] == cate].index[-1] == 0:
+                self.rows[cate_name] = 0
+                self.cates[cate_name] = []
+
+            if f"{self.categories[self.categories[cate_name] == cate].index[-1]}," not in self.cates[cate_name] \
+                    and f'0,' not in self.cates[cate_name]:
+
+                self.rows[cate_name] += 1
+                self.fill_table_new(data=cate, obj=tw_obj, len_rows=self.rows[cate_name])
+                self.cates[cate_name].append(f"{self.categories[self.categories[cate_name] == cate].index[-1]},")
+                com_obj.setCurrentIndex(0)
+            else:
+                com_obj.setCurrentIndex(0)
+
+    def del_cate(self, tw_obj, cte_name):
+        if self.comOmega.isVisible():
+            index = tw_obj.currentRow()
+            self.rows[cte_name] -= 1
+            self.cates[cte_name].pop(index)
+            tw_obj.removeRow(index)
+
+    def save_(self):
+        name = self.lblName.text()
+        sales_p = self.txtSlaesP.text()
+        contact_p = self.txtAdmin.text()
+        addr = self.txtAdrress.text()
+        mail = self.txtMail.text()
+        phone1 = self.txtPhone1.text()
+        phone2 = self.txtPhone2.text()
+        phone3 = self.txtPhone3.text()
+        phone4 = self.txtPhone4.text()
+        cust_type = self.txtCustType.text()
+        size = self.txtSize.text()
+
+        yarn_cate = ''.join(self.cates['yarn'])[:-1] if len(self.cates['yarn']) > 0 else ''
+        omega_cate = ''.join(self.cates['omega'])[:-1] if len(self.cates['omega']) > 0 else ''
+        cloth_cate = ''.join(self.cates['cloth'])[:-1] if len(self.cates['cloth']) > 0 else ''
+
+        is_yarn = 1 if self.cbYarn.isChecked() else ''
+        is_omega = 1 if self.cbOmega.isChecked() else ''
+        is_cloth = 1 if self.cbCloth.isChecked() else ''
