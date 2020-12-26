@@ -830,7 +830,7 @@ class Ui_details(object):
         self.groupBox_13.setStyleSheet("QGroupBox{\n"
 " background-color:rgba(66,66,66,30%);\n"
 "}")
-        self.groupBox_13.setTitle("")
+        self.groupBox_13.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.groupBox_13.setObjectName("groupBox_13")
         self.horizontalLayout_11 = QtWidgets.QHBoxLayout(self.groupBox_13)
         self.horizontalLayout_11.setObjectName("horizontalLayout_11")
@@ -865,7 +865,7 @@ class Ui_details(object):
         self.groupBox_4.setStyleSheet("QGroupBox{\n"
 " background-color:rgba(66,66,66,20%);\n"
 "}")
-        self.groupBox_4.setTitle("")
+        self.groupBox_4.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.groupBox_4.setObjectName("groupBox_4")
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.groupBox_4)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
@@ -912,7 +912,7 @@ class Ui_details(object):
         self.groupBox_20.setStyleSheet("QGroupBox{\n"
 " background-color:rgba(66,66,66,20%);\n"
 "}")
-        self.groupBox_20.setTitle("")
+        self.groupBox_20.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.groupBox_20.setObjectName("groupBox_20")
         self.horizontalLayout_8 = QtWidgets.QHBoxLayout(self.groupBox_20)
         self.horizontalLayout_8.setObjectName("horizontalLayout_8")
@@ -933,10 +933,14 @@ class Ui_details(object):
         self.horizontalLayout_8.addWidget(self.label_22)
         self.verticalLayout_5.addWidget(self.groupBox_20)
         self.groupBox_42 = QtWidgets.QGroupBox(self.groupBox_54)
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.groupBox_42.setFont(font)
         self.groupBox_42.setStyleSheet("QGroupBox{\n"
 " background-color:rgba(66,66,66,20%);\n"
 "}")
         self.groupBox_42.setTitle("")
+        self.groupBox_42.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.groupBox_42.setObjectName("groupBox_42")
         self.horizontalLayout_9 = QtWidgets.QHBoxLayout(self.groupBox_42)
         self.horizontalLayout_9.setObjectName("horizontalLayout_9")
@@ -1032,7 +1036,7 @@ class Ui_details(object):
         self.groupBox_52.setStyleSheet("QGroupBox{\n"
 " background-color:rgba(66,66,66,20%);\n"
 "}")
-        self.groupBox_52.setTitle("")
+        self.groupBox_52.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.groupBox_52.setObjectName("groupBox_52")
         self.horizontalLayout_38 = QtWidgets.QHBoxLayout(self.groupBox_52)
         self.horizontalLayout_38.setObjectName("horizontalLayout_38")
@@ -1079,6 +1083,7 @@ class Ui_details(object):
 " background-color:rgba(66,66,66,20%);\n"
 "}")
         self.groupBox_25.setTitle("")
+        self.groupBox_25.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.groupBox_25.setObjectName("groupBox_25")
         self.horizontalLayout_17 = QtWidgets.QHBoxLayout(self.groupBox_25)
         self.horizontalLayout_17.setObjectName("horizontalLayout_17")
@@ -1122,7 +1127,7 @@ class Ui_details(object):
         self.verticalLayout_5.addWidget(self.groupBox_25)
         self.verticalLayout_6.addWidget(self.groupBox_54)
         self.groupBox_16 = QtWidgets.QGroupBox(details)
-        self.groupBox_16.setTitle("")
+        self.groupBox_16.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.groupBox_16.setObjectName("groupBox_16")
         self.verticalLayout_12 = QtWidgets.QVBoxLayout(self.groupBox_16)
         self.verticalLayout_12.setObjectName("verticalLayout_12")
@@ -1231,15 +1236,20 @@ class Ui_details(object):
         self.btnOmega.setText(_translate("details", ".."))
         self.label_41.setText(_translate("details", "اصناف القماش"))
         self.btnCloth.setText(_translate("details", ".."))
+        self.groupBox_13.setTitle(_translate("details", "*"))
         self.btnEdit.setText(_translate("details", "..."))
         self.lblName.setText(_translate("details", "Name"))
+        self.groupBox_4.setTitle(_translate("details", "*"))
         self.label_9.setText(_translate("details", "مسؤل المبيعات"))
+        self.groupBox_20.setTitle(_translate("details", "*"))
         self.label_22.setText(_translate("details", "مسئول التواصل"))
         self.label_14.setText(_translate("details", "العنوان"))
         self.label_20.setText(_translate("details", "البريد الاليكتروني"))
         self.label_11.setText(_translate("details", "رقم الهاتف"))
+        self.groupBox_52.setTitle(_translate("details", "*"))
         self.label_40.setText(_translate("details", "نوع العميل"))
         self.label_24.setText(_translate("details", "الحجم"))
+        self.groupBox_16.setTitle(_translate("details", "*"))
         self.cbYarn.setText(_translate("details", "شركة الغزل"))
         self.cbOmega.setText(_translate("details", "شركة اوميجا"))
         self.cbCloth.setText(_translate("details", "القماش "))

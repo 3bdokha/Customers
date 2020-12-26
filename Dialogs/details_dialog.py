@@ -2,7 +2,9 @@ from PyQt5 import QtGui, QtCore
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QMessageBox
 from Layouts.details_ui import Ui_details
-from Threads.threads import PrintCustomer
+from Threads.threads import PrintCustomer, Save
+import pandas as pd
+from .loading_dialog import Loading
 
 
 class DetailsDialog(QDialog, Ui_details):
@@ -24,11 +26,17 @@ class DetailsDialog(QDialog, Ui_details):
         self.btnPrint.clicked.connect(self.print_customer)
         self.btnPrev.clicked.connect(self.prev_customer)
 
+        self.loading = Loading()
+
         self.mode = 'v'
         self.customer = None
         self.sheet_row_index = None
+        self.len_data = None
         self.categories = None
         self.sheet_customers = None
+        self.sales_p = None
+        self.customer_ = None
+        self.old_edit = None
 
         self.cate_yarn = []
         self.cate_omega = []
@@ -149,6 +157,13 @@ class DetailsDialog(QDialog, Ui_details):
     def thread_error(self, error):
         QMessageBox.warning(self, 'ERROR!', error)
 
+    def thread_save_error(self, error):
+        if self.mode == 'v':
+            self.customer = self.old_edit
+            self.cancel_editing()
+        self.loading.stop_dialog()
+        QMessageBox.warning(self, 'ERROR!', error)
+
     def fill_table(self, data=None, obj=None, len_rows=0, cate_name=''):
         self.rows[cate_name] = len_rows
         self.cates[cate_name] = []
@@ -201,6 +216,24 @@ class DetailsDialog(QDialog, Ui_details):
             self.comCloth.addItem('')
             self.comCloth.addItems(self.categories['cloth'].values)
 
+            current_sales_p = self.comSalesP.currentText()
+            self.comSalesP.clear()
+            self.comSalesP.addItem('')
+            self.comSalesP.addItems(self.sales_p['name'].values)
+            self.comSalesP.setCurrentText(current_sales_p)
+
+            current_cust_type = self.comCustType.currentText()
+            self.comCustType.clear()
+            self.comCustType.addItem('')
+            self.comCustType.addItems(['تاجر', 'مصنع', 'تاجر قماش'])
+            self.comCustType.setCurrentText(current_cust_type)
+
+            current_size = self.comSize.currentText()
+            self.comSize.clear()
+            self.comSize.addItem('')
+            self.comSize.addItems(['صغير', 'متوسط', 'كبير'])
+            self.comSize.setCurrentText(current_size)
+
     def add_cate(self, com_obj, cate_name, tw_obj):
         cate = com_obj.currentText()
         if cate != '':
@@ -226,22 +259,65 @@ class DetailsDialog(QDialog, Ui_details):
             tw_obj.removeRow(index)
 
     def save_(self):
-        name = self.lblName.text()
-        sales_p = self.txtSlaesP.text()
-        contact_p = self.txtAdmin.text()
-        addr = self.txtAdrress.text()
-        mail = self.txtMail.text()
-        phone1 = self.txtPhone1.text()
-        phone2 = self.txtPhone2.text()
-        phone3 = self.txtPhone3.text()
-        phone4 = self.txtPhone4.text()
-        cust_type = self.txtCustType.text()
-        size = self.txtSize.text()
 
-        yarn_cate = ''.join(self.cates['yarn'])[:-1] if len(self.cates['yarn']) > 0 else ''
-        omega_cate = ''.join(self.cates['omega'])[:-1] if len(self.cates['omega']) > 0 else ''
-        cloth_cate = ''.join(self.cates['cloth'])[:-1] if len(self.cates['cloth']) > 0 else ''
+        self.customer_ = {
+            'name': self.lblName.text(),
+            'sales_p': self.comSalesP.currentText(),
+            'admin': self.txtAdmin.text(),
+            'address': self.txtAdrress.text(),
+            'e_mail': self.txtMail.text(),
+            'phone1': self.txtPhone1.text(),
+            'phone2': self.txtPhone2.text(),
+            'phone3': self.txtPhone3.text(),
+            'phone4': self.txtPhone4.text(),
+            'cust_type': self.comCustType.currentText(),
+            'size': self.comSize.currentText(),
+            'yarn_cate': ''.join(self.cates['yarn'])[:-1] if len(self.cates['yarn']) > 0 else '',
+            'omega_cate': ''.join(self.cates['omega'])[:-1] if len(self.cates['omega']) > 0 else '',
+            'factory_cate': ''.join(self.cates['cloth'])[:-1] if len(self.cates['cloth']) > 0 else '',
+            'yarn': 1 if self.cbYarn.isChecked() else '',
+            'omega': 1 if self.cbOmega.isChecked() else '',
+            'factory': 1 if self.cbCloth.isChecked() else ''
+        }
 
-        is_yarn = 1 if self.cbYarn.isChecked() else ''
-        is_omega = 1 if self.cbOmega.isChecked() else ''
-        is_cloth = 1 if self.cbCloth.isChecked() else ''
+        if self.customer_['name'] != 'Name' and self.customer_['name'] != '' and self.customer_['sales_p'] != '' and \
+                self.customer_['admin'] != '' and self.customer_['cust_type'] != '' and (
+                self.cbYarn.isChecked() + self.cbOmega.isChecked() + self.cbCloth.isChecked()) > 0:
+            if self.sheet_customers is not None:
+                thread = Save(self)
+                thread.customer = self.customer_
+                thread.sheet = self.sheet_customers
+                thread.mode = self.mode
+                thread.len_data = self.len_data
+                thread.index = self.sheet_row_index
+                thread.done.connect(self.has_been_saved)
+                thread.error.connect(self.thread_save_error)
+                thread.start()
+
+                self.create_obj()
+                self.cancel_editing()
+                self.loading.start_dialog()
+            else:
+                self.thread_error('تحقق من الاتصال بالانترنت ...')
+
+    def has_been_saved(self):
+        QMessageBox.information(self, 'Success', 'تم الاضافه بنجاح')
+        self.loading.stop_dialog()
+
+    def create_obj(self):
+        if self.mode == 'v':
+            self.old_edit = self.customer
+
+        self.customer = pd.DataFrame(data=[self.customer_.values()], columns=self.customer_.keys())
+
+        self.customer['yarn_cate'] = self.customer['yarn_cate'].apply(lambda x: self.categories['yarn'].loc[
+            list(map(int, x.split(','))) if not isinstance(x, int) and x != '' else [] if x == '' else [
+                x]].values)
+
+        self.customer['omega_cate'] = self.customer['omega_cate'].apply(lambda x: self.categories['omega'].loc[
+            list(map(int, x.split(','))) if not isinstance(x, int) and x != '' else [] if x == '' else [
+                x]].values)
+
+        self.customer['factory_cate'] = self.customer['factory_cate'].apply(lambda x: self.categories['cloth'].loc[
+            list(map(int, x.split(','))) if not isinstance(x, int) and x != '' else [] if x == '' else [
+                x]].values)

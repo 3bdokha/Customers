@@ -29,6 +29,10 @@ if not os.path.exists(os.path.join(temp_path, 'cate.csv')):
     pd.DataFrame().to_csv(os.path.join(temp_path, 'temp.csv'), index=False, header=False,
                           encoding='utf-8-sig')
 
+if not os.path.exists(os.path.join(temp_path, 'sales_p.csv')):
+    pd.DataFrame().to_csv(os.path.join(temp_path, 'sales_p.csv'), index=False, header=False,
+                          encoding='utf-8-sig')
+
 if not os.path.exists(os.path.join(temp_path, 'Customer Form.xlsx')):
     copy2(os.path.join(BASE_DIR, 'Customer Form.xlsx'), temp_path)
 
@@ -43,7 +47,6 @@ def read_temp():
     customers = customers.replace(np.nan, '')
 
     customers['yarn_cate'] = customers['yarn_cate'].apply((lambda x: np.array(eval(x.replace(' ', ' ,')))))
-    #
     customers['omega_cate'] = customers['omega_cate'].apply((lambda x: np.array(eval(x.replace(' ', ' ,')))))
     customers['factory_cate'] = customers['factory_cate'].apply((lambda x: np.array(eval(x.replace(' ', ' ,')))))
 
@@ -51,13 +54,17 @@ def read_temp():
     cate = cate.set_index('code')
     cate = cate.replace(np.nan, '')
 
-    return customers, cate
+    sales_p = pd.read_csv(os.path.join(temp_path, 'sales_p.csv'), header=0)
+    sales_p = sales_p.set_index('code')
+    sales_p = sales_p.replace(np.nan, '')
+
+    return customers, cate, sales_p
 
 
 class GetAuth(QThread):
     auth = pyqtSignal(object)
     error = pyqtSignal(object)
-    off_data = pyqtSignal(object, object, object, str)
+    off_data = pyqtSignal(object, object, object, object, str)
 
     def run(self):
         no_internet = True
@@ -84,8 +91,8 @@ class GetAuth(QThread):
                     self.error.emit(str(e))
                     first = 0
 
-                cust, cate = read_temp()
-                self.off_data.emit(cust, cate, None, INTERNET)
+                cust, cate, sales_p = read_temp()
+                self.off_data.emit(cust, cate, sales_p, None, INTERNET)
 
                 time.sleep(5)
             print(INTERNET, datetime.time(datetime.now()))
@@ -93,13 +100,14 @@ class GetAuth(QThread):
 
 class GetData(QThread):
     sheet = None
-    data = pyqtSignal(object, object, object, str)
+    data = pyqtSignal(object, object, object, object, str)
     error = pyqtSignal(object, object)
 
     def run(self):
         # get the first sheet of the Spreadsheet
         sheet_customers = self.sheet.get_worksheet(0)
         sheet_category = self.sheet.get_worksheet(1)
+        sheet_sales_p = self.sheet.get_worksheet(2)
 
         while True:
             try:
@@ -111,15 +119,17 @@ class GetData(QThread):
                     'phone1': 'str',
                     'phone2': 'str',
                     'phone3': 'str',
-                    'phone4': 'str',
-                    'yarn_cate': 'str'
+                    'phone4': 'str'
                 })
 
                 # print(customers['phone1'])
 
                 categories = pd.DataFrame.from_dict(sheet_category.get_all_records())
-
                 categories = categories.set_index('code')
+
+                sales_p = pd.DataFrame.from_dict(sheet_sales_p.get_all_records())
+                sales_p = sales_p.set_index('code')
+
                 customers['yarn_cate'] = customers['yarn_cate'].apply(lambda x: categories['yarn'].loc[
                     list(map(int, x.split(','))) if not isinstance(x, int) and x != '' else [] if x == '' else [
                         x]].values)
@@ -133,15 +143,17 @@ class GetData(QThread):
                         x]].values)
 
                 INTERNET = online
-                self.data.emit(customers, categories, None, INTERNET)
+                self.data.emit(customers, categories, sales_p, sheet_customers, INTERNET)
 
                 customers.to_csv(os.path.join(temp_path, 'temp.csv'), index=False, encoding='utf-8-sig')
                 categories.to_csv(os.path.join(temp_path, 'cate.csv'), encoding='utf-8-sig')
+                sales_p.to_csv(os.path.join(temp_path, 'sales_p.csv'), encoding='utf-8-sig')
+
             except:
                 INTERNET = offline
-                cust, cate = read_temp()
+                cust, cate, sales_p = read_temp()
+                self.data.emit(cust, cate, sales_p, None, INTERNET)
 
-                self.data.emit(cust, cate, sheet_customers, INTERNET)
             print(INTERNET, datetime.time(datetime.now()))
             time.sleep(3)
 
@@ -182,4 +194,37 @@ class PrintCustomer(QThread):
             else:
                 os.startfile(form_path, 'print')
         except Exception as e:
+            self.error.emit(str(e))
+
+
+class Save(QThread):
+    sheet = None
+    customer = None
+    index = None
+    mode = None
+    len_data = None
+
+    done = pyqtSignal()
+    error = pyqtSignal(str)
+
+    def run(self):
+        try:
+            row = [self.index + 1, '', self.customer['sales_p'], self.customer['name'], self.customer['admin'], '',
+                   self.customer['address'], self.customer['phone1'], self.customer['phone2'], self.customer['phone3'],
+                   self.customer['phone4'], self.customer['e_mail'], self.customer['omega_cate'],
+                   self.customer['yarn_cate'], self.customer['factory_cate'], self.customer['size'],
+                   self.customer['factory'], self.customer['yarn'], self.customer['omega'],
+                   self.customer['cust_type'], '']
+
+            if self.mode == 'n':
+                self.sheet.insert_row(list(map(str, row)), self.len_data + 3)
+            else:
+                self.sheet.update_cell(self.index, 1, str(self.index))
+                for col in range(1, len(row)):
+                    print(col)
+                    self.sheet.update_cell(self.index, col + 1, str(row[col]))
+
+            self.done.emit()
+        except Exception as e:
+            print('here')
             self.error.emit(str(e))

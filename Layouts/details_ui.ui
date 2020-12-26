@@ -990,7 +990,10 @@ QTableWidget:item:selected
 }</string>
        </property>
        <property name="title">
-        <string/>
+        <string>*</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="0,0">
         <item>
@@ -1050,7 +1053,10 @@ QTableWidget:item:selected
 }</string>
           </property>
           <property name="title">
-           <string/>
+           <string>*</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,1,0">
            <item>
@@ -1124,7 +1130,10 @@ font-weight: bold;</string>
 }</string>
           </property>
           <property name="title">
-           <string/>
+           <string>*</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_8">
            <item>
@@ -1158,6 +1167,11 @@ font-weight: bold;</string>
         </item>
         <item>
          <widget class="QGroupBox" name="groupBox_42">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
           <property name="styleSheet">
            <string notr="true">QGroupBox{
  background-color:rgba(66,66,66,20%);
@@ -1165,6 +1179,9 @@ font-weight: bold;</string>
           </property>
           <property name="title">
            <string/>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_9">
            <item>
@@ -1329,7 +1346,10 @@ font-weight: bold;</string>
 }</string>
           </property>
           <property name="title">
-           <string/>
+           <string>*</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_38" stretch="1,1,0">
            <item>
@@ -1402,6 +1422,9 @@ font-weight: bold;</string>
           <property name="title">
            <string/>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
           <layout class="QHBoxLayout" name="horizontalLayout_17" stretch="1,1,0">
            <item>
             <widget class="QComboBox" name="comSize">
@@ -1469,7 +1492,10 @@ font-weight: bold;</string>
      <item>
       <widget class="QGroupBox" name="groupBox_16">
        <property name="title">
-        <string/>
+        <string>*</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_12">
         <item>

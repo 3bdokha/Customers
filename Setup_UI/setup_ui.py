@@ -1,9 +1,11 @@
 from PyQt5 import QtGui
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QTableWidgetItem, QMessageBox, QScrollBar, QHeaderView
 from Layouts.main_ui import Ui_MainWindow
 from Threads import threads as th
 from Dialogs.details_dialog import DetailsDialog
 import numpy as np
+from Dialogs.loading_dialog import Loading
 from datetime import datetime
 import pandas as pd
 import os
@@ -13,6 +15,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
     len_row = 0
     customers = None
     categories = None
+    sales_p = None
     sheet_customers = None
     first = True
 
@@ -25,7 +28,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.setWindowTitle('Customers - Main Window')
 
         # self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-
+        self.loading = Loading()
         self.starting_thread()
         self.comName.currentTextChanged.connect(self.filter)
         self.comPhone.currentTextChanged.connect(self.filter)
@@ -77,10 +80,12 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.comPhone.setEnabled(False)
         self.groupBox_53.setEnabled(False)
         self.btnRefresh.setEnabled(False)
+        self.actionNew_Customer.setEnabled(False)
 
         self.btnRefresh.clicked.connect(self.fill_controls)
 
     def starting_thread(self):
+        self.loading.start_dialog()
         thread = th.GetAuth(self)
         thread.auth.connect(self.get_auth)
         thread.error.connect(self.thread_error)
@@ -88,6 +93,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         thread.start()
 
     def get_auth(self, sheet):
+        self.loading.start_dialog()
         if sheet is not None:
             thread = th.GetData(self)
             thread.sheet = sheet
@@ -96,16 +102,20 @@ class MainForm(QMainWindow, Ui_MainWindow):
             thread.start()
 
     def thread_error(self, error):
+        if not self.comName.isEnabled():
+            self.loading.stop_dialog()
         QMessageBox.warning(self, 'ERROR!', error)
 
-    def get_data(self, customers, categories, sheet_customers, internet):
+    def get_data(self, customers, categories, sales_p, sheet_customers, internet):
         self.customers = customers
         self.categories = categories
+        self.sales_p = sales_p
         self.sheet_customers = sheet_customers
         self.lblInternet.setText(internet)
 
         if not self.comName.isEnabled():
             self.fill_controls()
+            self.loading.stop_dialog()
         else:
             self.filter()
 
@@ -113,8 +123,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.comPhone.setEnabled(1)
         self.groupBox_53.setEnabled(1)
         self.btnRefresh.setEnabled(1)
-
-        # self.fill_controls()
+        self.actionNew_Customer.setEnabled(1)
 
     def fill_controls(self):
         self.fill_table(data=self.customers[self.d_header].values.tolist())
@@ -152,6 +161,8 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.details.sheet_row_index = self.customers[self.customers['i'] == int(code)].index[-1] + 2
         self.details.categories = self.categories
         self.details.sheet_customers = self.sheet_customers
+        self.details.sales_p = self.sales_p
+        self.details.len_data = len(self.customers)
         self.details.mode = 'v'
         self.details.setup_edit_view_mode(e_mode=False)
         self.details.set_data()
@@ -161,7 +172,10 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.details = DetailsDialog()
         self.details.categories = self.categories
         self.details.sheet_customers = self.sheet_customers
+        self.details.sales_p = self.sales_p
+        self.details.len_data = len(self.customers)
         self.details.mode = 'n'
+        self.details.sheet_row_index = self.customers['i'].values[-1]
         self.details.setup_edit_view_mode(e_mode=True)
         self.details.show()
 
