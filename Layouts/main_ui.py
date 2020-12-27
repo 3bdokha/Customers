@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1307, 1000)
+        MainWindow.resize(1307, 959)
         MainWindow.setAcceptDrops(False)
         MainWindow.setStyleSheet("QToolTip\n"
 "{\n"
@@ -793,7 +793,15 @@ class Ui_MainWindow(object):
         self.twResalt.horizontalHeader().setStretchLastSection(True)
         self.verticalLayout.addWidget(self.twResalt)
         self.horizontalLayout_43.addWidget(self.groupBox_6)
-        self.groupBox_53 = QtWidgets.QGroupBox(self.tab)
+        self.scrollArea_4 = QtWidgets.QScrollArea(self.tab)
+        self.scrollArea_4.setWidgetResizable(True)
+        self.scrollArea_4.setObjectName("scrollArea_4")
+        self.scrollAreaWidgetContents_5 = QtWidgets.QWidget()
+        self.scrollAreaWidgetContents_5.setGeometry(QtCore.QRect(0, 0, 306, 768))
+        self.scrollAreaWidgetContents_5.setObjectName("scrollAreaWidgetContents_5")
+        self.verticalLayout_13 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents_5)
+        self.verticalLayout_13.setObjectName("verticalLayout_13")
+        self.groupBox_53 = QtWidgets.QGroupBox(self.scrollAreaWidgetContents_5)
         self.groupBox_53.setTitle("")
         self.groupBox_53.setObjectName("groupBox_53")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.groupBox_53)
@@ -928,6 +936,12 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addLayout(self.horizontalLayout_6)
         self.verticalLayout_3.addWidget(self.groupBox_23)
         self.swCates = QtWidgets.QStackedWidget(self.groupBox_53)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(100)
+        sizePolicy.setHeightForWidth(self.swCates.sizePolicy().hasHeightForWidth())
+        self.swCates.setSizePolicy(sizePolicy)
+        self.swCates.setMinimumSize(QtCore.QSize(0, 140))
         self.swCates.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.swCates.setAutoFillBackground(False)
         self.swCates.setStyleSheet("QGroupBox{\n"
@@ -944,7 +958,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 270, 397))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 243, 397))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_9 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_9.setObjectName("verticalLayout_9")
@@ -1242,7 +1256,7 @@ class Ui_MainWindow(object):
         self.groupBox_10.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.groupBox_10.setStyleSheet("QGroupBox{\n"
 " background-color:rgba(66,66,66,20%);\n"
-"padding-top:17px\n"
+"padding-top:20px\n"
 "}")
         self.groupBox_10.setAlignment(QtCore.Qt.AlignCenter)
         self.groupBox_10.setFlat(False)
@@ -1389,9 +1403,11 @@ class Ui_MainWindow(object):
         self.horizontalLayout_16.setStretch(0, 1)
         self.verticalLayout_3.addWidget(self.groupBox_11)
         self.verticalLayout_3.setStretch(1, 1)
-        self.verticalLayout_3.setStretch(2, 2)
+        self.verticalLayout_3.setStretch(2, 3)
         self.verticalLayout_3.setStretch(3, 1)
-        self.horizontalLayout_43.addWidget(self.groupBox_53)
+        self.verticalLayout_13.addWidget(self.groupBox_53)
+        self.scrollArea_4.setWidget(self.scrollAreaWidgetContents_5)
+        self.horizontalLayout_43.addWidget(self.scrollArea_4)
         self.horizontalLayout_43.setStretch(0, 3)
         self.horizontalLayout_43.setStretch(1, 1)
         self.verticalLayout_8.addLayout(self.horizontalLayout_43)

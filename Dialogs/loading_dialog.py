@@ -1,3 +1,4 @@
+from PyQt5 import QtCore
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QMovie
 from PyQt5.QtCore import Qt
@@ -13,7 +14,9 @@ class Loading(QWidget):
         self.movie = QMovie('assets\\load.gif')
         gu = ctypes.windll.user32
         self.setWindowFlags(Qt.FramelessWindowHint)
-        self.setGeometry(gu.GetSystemMetrics(0) / 2 - 300 / 2, gu.GetSystemMetrics(1) / 2 - 300 / 2, 300, 300)
+        # self.setGeometry(gu.GetSystemMetrics(0) / 2 - 300 / 2, gu.GetSystemMetrics(1) / 2 - 300 / 2, 300, 300)
+        self.setGeometry(
+            QtCore.QRect(gu.GetSystemMetrics(0) / 2 - 300 / 2, gu.GetSystemMetrics(1) / 2 - 300 / 2, 300, 300))
 
         self.lbl = QLabel()
         self.setStyleSheet("QLabel\n"

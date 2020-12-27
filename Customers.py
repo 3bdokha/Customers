@@ -4,7 +4,7 @@ import os
 import sys
 from Setup_UI.setup_ui import MainForm
 
-os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
+# os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
 
 app = QApplication(sys.argv)
 app.setAttribute(Qt.AA_EnableHighDpiScaling)
