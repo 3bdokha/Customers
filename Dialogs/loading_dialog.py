@@ -2,7 +2,6 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QMovie
 from PyQt5.QtCore import Qt
 import ctypes
-import sys
 
 
 class Loading(QWidget):

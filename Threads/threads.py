@@ -1,6 +1,6 @@
 import time
 from shutil import copy2
-from PyQt5.QtCore import Qt, QThread, pyqtSignal
+from PyQt5.QtCore import QThread, pyqtSignal
 import numpy as np
 import os
 import gspread
@@ -19,7 +19,6 @@ INTERNET = online
 
 if not os.path.exists(temp_path):
     os.makedirs(temp_path)
-
 
 if not os.path.exists(os.path.join(temp_path, 'temp.csv')):
     copy2(os.path.join(BASE_DIR, 'Assets\\temp.csv'), temp_path)
@@ -158,7 +157,7 @@ class GetData(QThread):
                 self.data.emit(cust, cate, sales_p, None, INTERNET)
 
             print(INTERNET, datetime.time(datetime.now()))
-            time.sleep(3)
+            time.sleep(5)
 
 
 class PrintCustomer(QThread):
@@ -212,7 +211,8 @@ class Save(QThread):
 
     def run(self):
         try:
-            row = [self.index + 1, '', self.customer['sales_p'], self.customer['name'], self.customer['admin'], '',
+            index = self.index + 1 if self.mode == 'n' else self.index
+            row = [index, '', self.customer['sales_p'], self.customer['name'], self.customer['admin'], '',
                    self.customer['address'], self.customer['phone1'], self.customer['phone2'], self.customer['phone3'],
                    self.customer['phone4'], self.customer['e_mail'], self.customer['omega_cate'],
                    self.customer['yarn_cate'], self.customer['factory_cate'], self.customer['size'],
@@ -222,12 +222,11 @@ class Save(QThread):
             if self.mode == 'n':
                 self.sheet.insert_row(list(map(str, row)), self.len_data + 3)
             else:
-                self.sheet.update_cell(self.index, 1, str(self.index))
-                for col in range(1, len(row)):
-                    print(col)
+                # self.sheet.update_cell(self.index, 1, str(self.index))
+                # self.sheet.update_row(self.index, list(map(str, row)))
+                for col in range(len(row)):
                     self.sheet.update_cell(self.index, col + 1, str(row[col]))
 
             self.done.emit()
         except Exception as e:
-            print('here')
             self.error.emit(str(e))

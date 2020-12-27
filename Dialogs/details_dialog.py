@@ -1,4 +1,4 @@
-from PyQt5 import QtGui, QtCore
+from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QMessageBox
 from Layouts.details_ui import Ui_details
@@ -299,6 +299,8 @@ class DetailsDialog(QDialog, Ui_details):
                 self.loading.start_dialog()
             else:
                 self.thread_error('تحقق من الاتصال بالانترنت ...')
+        else:
+            self.thread_error('برجاء ادخال جميع البيانات المطلوبه (*) اولا ...')
 
     def has_been_saved(self):
         QMessageBox.information(self, 'Success', 'تم الاضافه بنجاح')

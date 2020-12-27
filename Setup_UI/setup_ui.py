@@ -1,14 +1,10 @@
 from PyQt5 import QtGui
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QMainWindow, QFileDialog, QTableWidgetItem, QMessageBox, QScrollBar, QHeaderView
+from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem, QMessageBox
 from Layouts.main_ui import Ui_MainWindow
 from Threads import threads as th
 from Dialogs.details_dialog import DetailsDialog
 import numpy as np
 from Dialogs.loading_dialog import Loading
-from datetime import datetime
-import pandas as pd
-import os
 
 
 class MainForm(QMainWindow, Ui_MainWindow):
