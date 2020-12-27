@@ -19,22 +19,25 @@ INTERNET = online
 
 if not os.path.exists(temp_path):
     os.makedirs(temp_path)
-    pd.DataFrame().to_csv(os.path.join(temp_path, 'temp.csv'), index=False, header=False,
-                          encoding='utf-8-sig')
+
+
 if not os.path.exists(os.path.join(temp_path, 'temp.csv')):
-    pd.DataFrame().to_csv(os.path.join(temp_path, 'temp.csv'), index=False, header=False,
-                          encoding='utf-8-sig')
+    copy2(os.path.join(BASE_DIR, 'Assets\\temp.csv'), temp_path)
+    # pd.DataFrame().to_csv(os.path.join(temp_path, 'temp.csv'), index=False, header=False,
+    #                       encoding='utf-8-sig')
 
 if not os.path.exists(os.path.join(temp_path, 'cate.csv')):
-    pd.DataFrame().to_csv(os.path.join(temp_path, 'temp.csv'), index=False, header=False,
-                          encoding='utf-8-sig')
+    copy2(os.path.join(BASE_DIR, 'Assets\\cate.csv'), temp_path)
+    # pd.DataFrame().to_csv(os.path.join(temp_path, 'temp.csv'), index=False, header=False,
+    #                       encoding='utf-8-sig')
 
 if not os.path.exists(os.path.join(temp_path, 'sales_p.csv')):
-    pd.DataFrame().to_csv(os.path.join(temp_path, 'sales_p.csv'), index=False, header=False,
-                          encoding='utf-8-sig')
+    copy2(os.path.join(BASE_DIR, 'Assets\\sales_p.csv'), temp_path)
+    # pd.DataFrame().to_csv(os.path.join(temp_path, 'sales_p.csv'), index=False, header=False,
+    #                       encoding='utf-8-sig')
 
 if not os.path.exists(os.path.join(temp_path, 'Customer Form.xlsx')):
-    copy2(os.path.join(BASE_DIR, 'Customer Form.xlsx'), temp_path)
+    copy2(os.path.join(BASE_DIR, 'Assets\\Customer Form.xlsx'), temp_path)
 
 
 def read_temp():

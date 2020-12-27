@@ -115,7 +115,6 @@ class MainForm(QMainWindow, Ui_MainWindow):
 
         if not self.comName.isEnabled():
             self.fill_controls()
-            self.loading.stop_dialog()
         else:
             self.filter()
 
@@ -124,6 +123,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.groupBox_53.setEnabled(1)
         self.btnRefresh.setEnabled(1)
         self.actionNew_Customer.setEnabled(1)
+        self.loading.stop_dialog()
 
     def fill_controls(self):
         self.fill_table(data=self.customers[self.d_header].values.tolist())
