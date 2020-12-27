@@ -14,9 +14,13 @@ class Loading(QWidget):
         self.movie = QMovie('assets\\load.gif')
         gu = ctypes.windll.user32
         self.setWindowFlags(Qt.FramelessWindowHint)
-        # self.setGeometry(gu.GetSystemMetrics(0) / 2 - 300 / 2, gu.GetSystemMetrics(1) / 2 - 300 / 2, 300, 300)
-        self.setGeometry(
-            QtCore.QRect(gu.GetSystemMetrics(0) / 2 - 300 / 2, gu.GetSystemMetrics(1) / 2 - 300 / 2, 300, 300))
+
+        if int(open('Assets\\scaling.txt', mode='r').read()) == 0:
+            # self.setGeometry(gu.GetSystemMetrics(0) / 2 - 300 / 2, gu.GetSystemMetrics(1) / 2 - 300 / 2, 300, 300)
+            self.setGeometry(
+                QtCore.QRect(gu.GetSystemMetrics(0) / 2 - 300 / 2, gu.GetSystemMetrics(1) / 2 - 300 / 2, 300, 300))
+        else:
+            self.setGeometry(500, 500, 300, 300)
 
         self.lbl = QLabel()
         self.setStyleSheet("QLabel\n"

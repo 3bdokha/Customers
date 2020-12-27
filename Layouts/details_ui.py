@@ -14,13 +14,13 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_details(object):
     def setupUi(self, details):
         details.setObjectName("details")
-        details.resize(1126, 796)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Preferred)
+        details.resize(1241, 815)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(details.sizePolicy().hasHeightForWidth())
         details.setSizePolicy(sizePolicy)
-        details.setMaximumSize(QtCore.QSize(1126, 16777215))
+        details.setMaximumSize(QtCore.QSize(16777215, 16777215))
         details.setStyleSheet("QToolTip\n"
 "{\n"
 "     border: 1px solid black;\n"
@@ -543,9 +543,11 @@ class Ui_details(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1106, 776))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1221, 795))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
-        self.horizontalLayout_7 = QtWidgets.QHBoxLayout(self.scrollAreaWidgetContents)
+        self.gridLayout_2 = QtWidgets.QGridLayout(self.scrollAreaWidgetContents)
+        self.gridLayout_2.setObjectName("gridLayout_2")
+        self.horizontalLayout_7 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_7.setObjectName("horizontalLayout_7")
         self.verticalLayout_7 = QtWidgets.QVBoxLayout()
         self.verticalLayout_7.setObjectName("verticalLayout_7")
@@ -1230,6 +1232,8 @@ class Ui_details(object):
         self.verticalLayout_6.addLayout(self.horizontalLayout)
         self.verticalLayout_6.setStretch(0, 1)
         self.horizontalLayout_7.addLayout(self.verticalLayout_6)
+        self.horizontalLayout_7.setStretch(1, 1)
+        self.gridLayout_2.addLayout(self.horizontalLayout_7, 0, 0, 1, 1)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout.addWidget(self.scrollArea, 0, 0, 1, 1)
 

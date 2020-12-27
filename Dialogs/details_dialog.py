@@ -26,6 +26,7 @@ class DetailsDialog(QDialog, Ui_details):
         self.btnPrint.clicked.connect(self.print_customer)
         self.btnPrev.clicked.connect(self.prev_customer)
 
+        # self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.loading = Loading()
 
         self.mode = 'v'
