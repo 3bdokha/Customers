@@ -15,7 +15,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
     sheet_customers = None
     first = True
 
-    d_header = ['i', 'name', 'phone1', 'phone2', 'address', 'sales_p']
+    d_header = ['i', 'name', 'phone1', 'phone2', 'address', 'sales_yarn']
 
     def __init__(self):
         QMainWindow.__init__(self)
@@ -28,8 +28,8 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.starting_thread()
         self.comName.currentTextChanged.connect(self.filter)
         self.comPhone.currentTextChanged.connect(self.filter)
-        self.comAdmin_C.currentTextChanged.connect(self.filter)
-        self.comAdmin_P.currentTextChanged.connect(self.filter)
+        self.comContactPerson.currentTextChanged.connect(self.filter)
+        self.comSalesPerson.currentTextChanged.connect(self.filter)
         self.twResalt.itemDoubleClicked.connect(self.on_click_item)
         self.btnReset.clicked.connect(self.reset)
         self.actionNew_Customer.triggered.connect(self.new_customer)
@@ -271,7 +271,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
 
         # search by contact person
         if len(result) > 0:
-            result = result[result.admin.str.contains(self.comAdmin_C.currentText())]
+            result = result[result.contact_p.str.contains(self.comContactPerson.currentText())]
             self.fill_table(data=result[self.d_header].values.tolist())
 
         # Search by name
@@ -290,14 +290,14 @@ class MainForm(QMainWindow, Ui_MainWindow):
 
         # Search by sales person
         if len(result) > 0:
-            result = result[result.sales_p.str.contains(self.comAdmin_P.currentText())]
+            result = result[result.sales_yarn.str.contains(self.comSalesPerson.currentText())]
             self.fill_table(data=result[self.d_header].values.tolist())
 
     def reset(self):
         self.comName.setCurrentText('')
         self.comPhone.setCurrentText('')
-        self.comAdmin_C.setCurrentText('')
-        self.comAdmin_P.setCurrentText('')
+        self.comContactPerson.setCurrentText('')
+        self.comSalesPerson.setCurrentText('')
 
         # Filter by company
         self.cbColth.setChecked(False)

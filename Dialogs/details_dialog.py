@@ -62,10 +62,10 @@ class DetailsDialog(QDialog, Ui_details):
 
         self.lblName.setText(self.customer['name'].values[-1])
 
-        self.txtSlaesP.setText(self.customer['sales_p'].values[-1])
-        self.comSalesP.setCurrentText(self.customer['sales_p'].values[-1])
+        self.txtSlaesP.setText(self.customer['sales_yarn'].values[-1])
+        self.comSalesP.setCurrentText(self.customer['sales_yarn'].values[-1])
 
-        self.txtAdmin.setText(self.customer['admin'].values[-1])
+        self.txtAdmin.setText(self.customer['contact_p'].values[-1])
         self.txtAdrress.setText(self.customer['address'].values[-1])
         self.txtMail.setText(self.customer['e_mail'].values[-1])
         self.txtPhone1.setText(
@@ -263,8 +263,8 @@ class DetailsDialog(QDialog, Ui_details):
 
         self.customer_ = {
             'name': self.lblName.text(),
-            'sales_p': self.comSalesP.currentText(),
-            'admin': self.txtAdmin.text(),
+            'sales_yarn': self.comSalesP.currentText(),
+            'contact_p': self.txtAdmin.text(),
             'address': self.txtAdrress.text(),
             'e_mail': self.txtMail.text(),
             'phone1': self.txtPhone1.text(),
@@ -281,8 +281,8 @@ class DetailsDialog(QDialog, Ui_details):
             'factory': 1 if self.cbCloth.isChecked() else ''
         }
 
-        if self.customer_['name'] != 'Name' and self.customer_['name'] != '' and self.customer_['sales_p'] != '' and \
-                self.customer_['admin'] != '' and self.customer_['cust_type'] != '' and (
+        if self.customer_['name'] != 'Name' and self.customer_['name'] != '' and self.customer_['sales_yarn'] != '' and \
+                self.customer_['contact_p'] != '' and self.customer_['cust_type'] != '' and (
                 self.cbYarn.isChecked() + self.cbOmega.isChecked() + self.cbCloth.isChecked()) > 0:
             if self.sheet_customers is not None:
                 thread = Save(self)

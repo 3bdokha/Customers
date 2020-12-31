@@ -176,8 +176,8 @@ class PrintCustomer(QThread):
 
             # Data can be assigned directly to cells
             ws['D1'] = self.customer['name'].values[-1]
-            ws['E3'] = self.customer['sales_p'].values[-1]
-            ws['E4'] = self.customer['admin'].values[-1]
+            ws['E3'] = self.customer['sales_yarn'].values[-1]
+            ws['E4'] = self.customer['contact_p'].values[-1]
             ws['E5'] = self.customer['address'].values[-1]
             ws['E6'] = f"0{self.customer['phone1'].values[-1]}" if self.customer['phone1'].values[-1] != '' else ''
             ws['H6'] = f"0{self.customer['phone2'].values[-1]}" if self.customer['phone2'].values[-1] != '' else ''
@@ -212,7 +212,7 @@ class Save(QThread):
     def run(self):
         try:
             index = self.index + 1 if self.mode == 'n' else self.index
-            row = [index, '', self.customer['sales_p'], self.customer['name'], self.customer['admin'], '',
+            row = [index, '', self.customer['sales_yarn'], '', '', self.customer['name'], self.customer['contact_p'], '',
                    self.customer['address'], self.customer['phone1'], self.customer['phone2'], self.customer['phone3'],
                    self.customer['phone4'], self.customer['e_mail'], self.customer['omega_cate'],
                    self.customer['yarn_cate'], self.customer['factory_cate'], self.customer['size'],

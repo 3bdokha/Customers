@@ -797,7 +797,7 @@ class Ui_MainWindow(object):
         self.scrollArea_4.setWidgetResizable(True)
         self.scrollArea_4.setObjectName("scrollArea_4")
         self.scrollAreaWidgetContents_5 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_5.setGeometry(QtCore.QRect(0, -62, 306, 768))
+        self.scrollAreaWidgetContents_5.setGeometry(QtCore.QRect(0, 0, 306, 768))
         self.scrollAreaWidgetContents_5.setObjectName("scrollAreaWidgetContents_5")
         self.verticalLayout_13 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents_5)
         self.verticalLayout_13.setObjectName("verticalLayout_13")
@@ -1086,7 +1086,7 @@ class Ui_MainWindow(object):
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollArea_2.setObjectName("scrollArea_2")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 243, 396))
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(-80, 0, 161, 396))
         self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
         self.verticalLayout_12 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents_2)
         self.verticalLayout_12.setObjectName("verticalLayout_12")
@@ -1214,7 +1214,7 @@ class Ui_MainWindow(object):
         self.scrollArea_3.setWidgetResizable(True)
         self.scrollArea_3.setObjectName("scrollArea_3")
         self.scrollAreaWidgetContents_3 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 250, 116))
+        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(-83, 0, 164, 84))
         self.scrollAreaWidgetContents_3.setObjectName("scrollAreaWidgetContents_3")
         self.verticalLayout_14 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents_3)
         self.verticalLayout_14.setObjectName("verticalLayout_14")
@@ -1312,13 +1312,13 @@ class Ui_MainWindow(object):
         self.groupBox_18.setObjectName("groupBox_18")
         self.horizontalLayout_20 = QtWidgets.QHBoxLayout(self.groupBox_18)
         self.horizontalLayout_20.setObjectName("horizontalLayout_20")
-        self.comAdmin_C = QtWidgets.QComboBox(self.groupBox_18)
+        self.comContactPerson = QtWidgets.QComboBox(self.groupBox_18)
         font = QtGui.QFont()
         font.setPointSize(-1)
         font.setBold(True)
         font.setWeight(75)
-        self.comAdmin_C.setFont(font)
-        self.comAdmin_C.setStyleSheet("background-color: #D7CCC8;\n"
+        self.comContactPerson.setFont(font)
+        self.comContactPerson.setStyleSheet("background-color: #D7CCC8;\n"
 "border-width: 1px;\n"
 "border-color: #1e1e1e;\n"
 "border-radius: 6;\n"
@@ -1327,10 +1327,10 @@ class Ui_MainWindow(object):
 "padding-right: 5px;\n"
 "font-size: 17px;\n"
 "font-weight: bold;")
-        self.comAdmin_C.setEditable(True)
-        self.comAdmin_C.setInsertPolicy(QtWidgets.QComboBox.NoInsert)
-        self.comAdmin_C.setObjectName("comAdmin_C")
-        self.horizontalLayout_20.addWidget(self.comAdmin_C)
+        self.comContactPerson.setEditable(True)
+        self.comContactPerson.setInsertPolicy(QtWidgets.QComboBox.NoInsert)
+        self.comContactPerson.setObjectName("comContactPerson")
+        self.horizontalLayout_20.addWidget(self.comContactPerson)
         self.label_23 = QtWidgets.QLabel(self.groupBox_18)
         font = QtGui.QFont()
         font.setPointSize(14)
@@ -1349,13 +1349,13 @@ class Ui_MainWindow(object):
         self.groupBox_19.setObjectName("groupBox_19")
         self.horizontalLayout_22 = QtWidgets.QHBoxLayout(self.groupBox_19)
         self.horizontalLayout_22.setObjectName("horizontalLayout_22")
-        self.comAdmin_P = QtWidgets.QComboBox(self.groupBox_19)
+        self.comSalesPerson = QtWidgets.QComboBox(self.groupBox_19)
         font = QtGui.QFont()
         font.setPointSize(-1)
         font.setBold(True)
         font.setWeight(75)
-        self.comAdmin_P.setFont(font)
-        self.comAdmin_P.setStyleSheet("background-color: #D7CCC8;\n"
+        self.comSalesPerson.setFont(font)
+        self.comSalesPerson.setStyleSheet("background-color: #D7CCC8;\n"
 "border-width: 1px;\n"
 "border-color: #1e1e1e;\n"
 "border-radius: 6;\n"
@@ -1364,10 +1364,10 @@ class Ui_MainWindow(object):
 "padding-right: 5px;\n"
 "font-size: 17px;\n"
 "font-weight: bold;")
-        self.comAdmin_P.setEditable(True)
-        self.comAdmin_P.setInsertPolicy(QtWidgets.QComboBox.NoInsert)
-        self.comAdmin_P.setObjectName("comAdmin_P")
-        self.horizontalLayout_22.addWidget(self.comAdmin_P)
+        self.comSalesPerson.setEditable(True)
+        self.comSalesPerson.setInsertPolicy(QtWidgets.QComboBox.NoInsert)
+        self.comSalesPerson.setObjectName("comSalesPerson")
+        self.horizontalLayout_22.addWidget(self.comSalesPerson)
         self.label_25 = QtWidgets.QLabel(self.groupBox_19)
         font = QtGui.QFont()
         font.setPointSize(14)
