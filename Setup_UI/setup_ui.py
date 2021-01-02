@@ -13,7 +13,9 @@ class MainForm(QMainWindow, Ui_MainWindow):
     customers = None
     categories = None
     sales_p = None
+    edit_requests = None
     sheet_customers = None
+    sheet_requests = None
     first = True
 
     d_header = ['i', 'name', 'phone1', 'phone2', 'address', 'sales_yarn']
@@ -105,11 +107,13 @@ class MainForm(QMainWindow, Ui_MainWindow):
             self.loading.stop_dialog()
         QMessageBox.warning(self, 'ERROR!', error)
 
-    def get_data(self, customers, categories, sales_p, sheet_customers, internet):
+    def get_data(self, customers, categories, sales_p, edit_requests, sheet_customers, sheet_requests, internet):
         self.customers = customers
         self.categories = categories
         self.sales_p = sales_p
+        self.edit_requests = edit_requests
         self.sheet_customers = sheet_customers
+        self.sheet_requests = sheet_requests
         self.lblInternet.setText(internet)
 
         if not self.comName.isEnabled():

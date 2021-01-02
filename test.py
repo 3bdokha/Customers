@@ -27,8 +27,12 @@
 #
 # print(x == y)
 
-import json
+# import json
+#
+# auth = json.load(open('Assets/Tokens/Omega.json'))['client_email'].split('@')[0]
+#
+# print(auth)
 
-auth = json.load(open('Assets/Tokens/Omega.json'))['client_email'].split('@')[0]
+x = [1, 2, 3]
 
-print(file)
+print([0] + x)

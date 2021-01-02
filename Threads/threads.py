@@ -48,9 +48,10 @@ def read_temp():
     })
     customers = customers.replace(np.nan, '')
 
-    customers['yarn_cate'] = customers['yarn_cate'].apply((lambda x: np.array(eval(x.replace(' ', ' ,')))))
-    customers['omega_cate'] = customers['omega_cate'].apply((lambda x: np.array(eval(x.replace(' ', ' ,')))))
-    customers['factory_cate'] = customers['factory_cate'].apply((lambda x: np.array(eval(x.replace(' ', ' ,')))))
+    customers['yarn_cate_name'] = customers['yarn_cate_name'].apply((lambda x: np.array(eval(x.replace(' ', ' ,')))))
+    customers['omega_cate_name'] = customers['omega_cate_name'].apply((lambda x: np.array(eval(x.replace(' ', ' ,')))))
+    customers['factory_cate_name'] = customers['factory_cate_name'].apply(
+        (lambda x: np.array(eval(x.replace(' ', ' ,')))))
 
     cate = pd.read_csv(os.path.join(temp_path, 'cate.csv'), header=0)
     cate = cate.set_index('code')
@@ -66,7 +67,7 @@ def read_temp():
 class GetAuth(QThread):
     auth = pyqtSignal(object)
     error = pyqtSignal(object)
-    off_data = pyqtSignal(object, object, object, object, str)
+    off_data = pyqtSignal(object, object, object, object, object, object, str)
 
     def run(self):
         no_internet = True
@@ -94,7 +95,8 @@ class GetAuth(QThread):
                     first = 0
 
                 cust, cate, sales_p = read_temp()
-                self.off_data.emit(cust, cate, sales_p, None, INTERNET)
+                edit_requests = pd.DataFrame([], columns=cust.columns)
+                self.off_data.emit(cust, cate, sales_p, edit_requests, None, None, INTERNET)
 
                 time.sleep(5)
             print(INTERNET, datetime.time(datetime.now()))
@@ -102,7 +104,7 @@ class GetAuth(QThread):
 
 class GetData(QThread):
     sheet = None
-    data = pyqtSignal(object, object, object, object, str)
+    data = pyqtSignal(object, object, object, object, object, object, str)
     error = pyqtSignal(object, object)
 
     def run(self):
@@ -110,6 +112,7 @@ class GetData(QThread):
         sheet_customers = self.sheet.get_worksheet(0)
         sheet_category = self.sheet.get_worksheet(1)
         sheet_sales_p = self.sheet.get_worksheet(2)
+        sheet_requests = self.sheet.get_worksheet(3)
 
         while True:
             try:
@@ -126,38 +129,51 @@ class GetData(QThread):
 
                 # print(customers['phone1'])
 
+                edit_requests = pd.DataFrame.from_dict(sheet_requests.get_all_records())
+                edit_requests = edit_requests.drop(index=0)
+                edit_requests = edit_requests.replace(np.nan, '')
+
                 categories = pd.DataFrame.from_dict(sheet_category.get_all_records())
                 categories = categories.set_index('code')
 
                 sales_p = pd.DataFrame.from_dict(sheet_sales_p.get_all_records())
                 sales_p = sales_p.set_index('code')
 
-                customers['yarn_cate_name'] = customers['yarn_cate'].apply(lambda x: categories['yarn'].loc[
-                    list(map(int, x.split(','))) if not isinstance(x, int) and x != '' else [] if x == '' else [
-                        x]].values)
-
-                customers['omega_cate_name'] = customers['omega_cate'].apply(lambda x: categories['omega'].loc[
-                    list(map(int, x.split(','))) if not isinstance(x, int) and x != '' else [] if x == '' else [
-                        x]].values)
-
-                customers['factory_cate_name'] = customers['factory_cate'].apply(lambda x: categories['cloth'].loc[
-                    list(map(int, x.split(','))) if not isinstance(x, int) and x != '' else [] if x == '' else [
-                        x]].values)
+                customers = self.convert_num_to_words(customers, categories)
+                edit_requests = self.convert_num_to_words(edit_requests, categories)
 
                 INTERNET = online
-                self.data.emit(customers, categories, sales_p, sheet_customers, INTERNET)
+                self.data.emit(customers, categories, sales_p, edit_requests, sheet_customers, sheet_requests, INTERNET)
 
                 customers.to_csv(os.path.join(temp_path, 'temp.csv'), index=False, encoding='utf-8-sig')
                 categories.to_csv(os.path.join(temp_path, 'cate.csv'), encoding='utf-8-sig')
                 sales_p.to_csv(os.path.join(temp_path, 'sales_p.csv'), encoding='utf-8-sig')
 
-            except:
+            except Exception as e:
+                print(e)
                 INTERNET = offline
                 cust, cate, sales_p = read_temp()
-                self.data.emit(cust, cate, sales_p, None, INTERNET)
+                edit_requests = pd.DataFrame([], columns=cust.columns)
+                self.data.emit(cust, cate, sales_p, edit_requests, None, None, INTERNET)
 
             print(INTERNET, datetime.time(datetime.now()))
             time.sleep(10)
+
+    @staticmethod
+    def convert_num_to_words(customers, categories):
+        customers['yarn_cate_name'] = customers['yarn_cate'].apply(lambda x: categories['yarn'].loc[
+            list(map(int, x.split(','))) if not isinstance(x, int) and x != '' else [] if x == '' else [
+                x]].values)
+
+        customers['omega_cate_name'] = customers['omega_cate'].apply(lambda x: categories['omega'].loc[
+            list(map(int, x.split(','))) if not isinstance(x, int) and x != '' else [] if x == '' else [
+                x]].values)
+
+        customers['factory_cate_name'] = customers['factory_cate'].apply(lambda x: categories['cloth'].loc[
+            list(map(int, x.split(','))) if not isinstance(x, int) and x != '' else [] if x == '' else [
+                x]].values)
+
+        return customers
 
 
 class PrintCustomer(QThread):
@@ -204,7 +220,8 @@ class Save(QThread):
     customer = None
     old_customer = None
     auth = None
-    index = None
+    auth_type = None
+    sheet_row_index = None
     mode = None
     len_data = None
 
@@ -213,19 +230,65 @@ class Save(QThread):
 
     def run(self):
         try:
-            row = [self.customer['i'], self.customer['sales_yarn'], self.customer['sales_omega'], self.customer['sales_cloth'],
-                   self.customer['name'], self.customer['contact_p'], self.customer['branch'], self.customer['area'],
-                   self.customer['address'], self.customer['phone1'], self.customer['phone2'], self.customer['phone3'],
-                   self.customer['phone4'], self.customer['e_mail'], self.customer['omega_cate'],
-                   self.customer['yarn_cate'], self.customer['factory_cate'], self.customer['size'],
-                   self.customer['factory'], self.customer['yarn'], self.customer['omega'],
-                   self.customer['cust_type'], self.customer['by']]
+            row = [self.customer['i'],
+                   self.customer['sales_yarn'],
+                   self.customer['sales_omega'],
+                   self.customer['sales_cloth'],
+                   self.customer['name'],
+                   self.customer['contact_p'],
+                   self.customer['branch'],
+                   self.customer['area'],
+                   self.customer['address'],
+                   self.customer['phone1'],
+                   self.customer['phone2'],
+                   self.customer['phone3'],
+                   self.customer['phone4'],
+                   self.customer['e_mail'],
+                   self.customer['omega_cate'],
+                   self.customer['yarn_cate'],
+                   self.customer['factory_cate'],
+                   self.customer['size'],
+                   self.customer['factory'],
+                   self.customer['yarn'],
+                   self.customer['omega'],
+                   self.customer['cust_type'],
+                   self.customer['by']
+                   ]
 
             if self.mode == 'n':
                 self.sheet.insert_row(list(map(str, row)), self.len_data + 3)
             else:
-                for col in range(len(row)):
-                    self.sheet.update_cell(self.index, col + 1, str(row[col]))
+                if self.auth_type == 'admin':
+                    for col in range(len(row)):
+                        self.sheet.update_cell(self.sheet_row_index, col + 1, str(row[col]))
+                else:
+                    row = [['new'] + row,
+                           ['old'] + [self.old_customer['i'],
+                                      self.old_customer['sales_yarn'],
+                                      self.old_customer['sales_omega'],
+                                      self.old_customer['sales_cloth'],
+                                      self.old_customer['name'],
+                                      self.old_customer['contact_p'],
+                                      self.old_customer['branch'],
+                                      self.old_customer['area'],
+                                      self.old_customer['address'],
+                                      self.old_customer['phone1'],
+                                      self.old_customer['phone2'],
+                                      self.old_customer['phone3'],
+                                      self.old_customer['phone4'],
+                                      self.old_customer['e_mail'],
+                                      self.old_customer['omega_cate'],
+                                      self.old_customer['yarn_cate'],
+                                      self.old_customer['factory_cate'],
+                                      self.old_customer['size'],
+                                      self.old_customer['factory'],
+                                      self.old_customer['yarn'],
+                                      self.old_customer['omega'],
+                                      self.old_customer['cust_type'],
+                                      self.old_customer['by']]
+                           ]
+
+                    pass
 
             self.done.emit()
         except Exception as e:

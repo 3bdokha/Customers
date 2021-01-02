@@ -52,6 +52,8 @@ class DetailsDialog(QDialog, Ui_details):
         self.old_edit = None
         self.auth = None
 
+        self.auth_type = 'admin'
+
         self.cate_yarn = []
         self.cate_omega = []
         self.cate_cloth = []
@@ -322,16 +324,19 @@ class DetailsDialog(QDialog, Ui_details):
     def add_cate(self, com_obj, cate_name, tw_obj):
         cate = com_obj.currentText()
         if cate != '':
-            if len(self.cates[cate_name]) > 0 and self.categories[self.categories[cate_name] == cate].index[-1] == 0:
+            if len(self.cates[cate_name]) > 0 and self.categories[self.categories[cate_name] == cate].sheet_row_index[
+                -1] == 0:
                 self.rows[cate_name] = 0
                 self.cates[cate_name] = []
 
-            if f"{self.categories[self.categories[cate_name] == cate].index[-1]}," not in self.cates[cate_name] \
+            if f"{self.categories[self.categories[cate_name] == cate].sheet_row_index[-1]}," not in self.cates[
+                cate_name] \
                     and f'0,' not in self.cates[cate_name]:
 
                 self.rows[cate_name] += 1
                 self.fill_table_new(data=cate, obj=tw_obj, len_rows=self.rows[cate_name])
-                self.cates[cate_name].append(f"{self.categories[self.categories[cate_name] == cate].index[-1]},")
+                self.cates[cate_name].append(
+                    f"{self.categories[self.categories[cate_name] == cate].sheet_row_index[-1]},")
                 com_obj.setCurrentIndex(0)
             else:
                 com_obj.setCurrentIndex(0)
@@ -367,8 +372,35 @@ class DetailsDialog(QDialog, Ui_details):
             'yarn_cate': ''.join(self.cates['yarn'])[:-1] if len(self.cates['yarn']) > 0 else '',
             'omega_cate': ''.join(self.cates['omega'])[:-1] if len(self.cates['omega']) > 0 else '',
             'factory_cate': ''.join(self.cates['cloth'])[:-1] if len(self.cates['cloth']) > 0 else '',
-            'by': ''
+            'by': self.auth
         }
+        old_customer = []
+        if self.mode == 'v':
+            old_customer = {
+                'i': self.customer['i'].values[-1],
+                'name': self.customer['name'].values[-1],
+                'sales_yarn': self.customer['sales_yarn'].values[-1],
+                'sales_omega': self.customer['sales_omega'].values[-1],
+                'sales_cloth': self.customer['sales_cloth'].values[-1],
+                'contact_p': self.customer['contact_p'].values[-1],
+                'branch': self.customer['branch'].values[-1],
+                'area': self.customer['area'].values[-1],
+                'address': self.customer['address'].values[-1],
+                'e_mail': self.customer['e_mail'].values[-1],
+                'phone1': self.customer['phone1'].values[-1],
+                'phone2': self.customer['phone2'].values[-1],
+                'phone3': self.customer['phone3'].values[-1],
+                'phone4': self.customer['phone4'].values[-1],
+                'cust_type': self.customer['cust_type'].values[-1],
+                'size': self.customer['size'].values[-1],
+                'yarn': self.customer['yarn'].values[-1],
+                'omega': self.customer['omega'].values[-1],
+                'factory': self.customer['factory'].values[-1],
+                'yarn_cate': self.customer['yarn_cate'].values[-1],
+                'omega_cate': self.customer['omega_cate'].values[-1],
+                'factory_cate': self.customer['factory_cate'].values[-1],
+                'by': self.auth
+            }
 
         edited = True
         if self.mode == 'v':
@@ -399,7 +431,9 @@ class DetailsDialog(QDialog, Ui_details):
                     thread.sheet = self.sheet_customers
                     thread.mode = self.mode
                     thread.len_data = self.len_data
-                    thread.index = self.sheet_row_index
+                    thread.sheet_row_index = self.sheet_row_index
+                    thread.old_customer = old_customer
+                    thread.auth_type = 'editor'
                     thread.done.connect(self.has_been_saved)
                     thread.error.connect(self.thread_save_error)
                     thread.start()
