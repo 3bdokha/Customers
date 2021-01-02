@@ -120,12 +120,6 @@ class GetData(QThread):
                 customers = pd.DataFrame.from_dict(sheet_customers.get_all_records())
                 customers = customers.drop(index=0)
                 customers = customers.replace(np.nan, '')
-                customers = customers.astype({
-                    'phone1': 'str',
-                    'phone2': 'str',
-                    'phone3': 'str',
-                    'phone4': 'str'
-                })
 
                 # print(customers['phone1'])
 
@@ -161,6 +155,13 @@ class GetData(QThread):
 
     @staticmethod
     def convert_num_to_words(customers, categories):
+        customers = customers.astype({
+            'phone1': 'str',
+            'phone2': 'str',
+            'phone3': 'str',
+            'phone4': 'str'
+        })
+
         customers['yarn_cate_name'] = customers['yarn_cate'].apply(lambda x: categories['yarn'].loc[
             list(map(int, x.split(','))) if not isinstance(x, int) and x != '' else [] if x == '' else [
                 x]].values)
@@ -217,6 +218,7 @@ class PrintCustomer(QThread):
 
 class Save(QThread):
     sheet = None
+    sheet_requests = None
     customer = None
     old_customer = None
     auth = None
@@ -225,71 +227,124 @@ class Save(QThread):
     mode = None
     len_data = None
 
-    done = pyqtSignal()
+    done = pyqtSignal(str, str)
     error = pyqtSignal(str)
 
     def run(self):
         try:
-            row = [self.customer['i'],
-                   self.customer['sales_yarn'],
-                   self.customer['sales_omega'],
-                   self.customer['sales_cloth'],
-                   self.customer['name'],
-                   self.customer['contact_p'],
-                   self.customer['branch'],
-                   self.customer['area'],
-                   self.customer['address'],
-                   self.customer['phone1'],
-                   self.customer['phone2'],
-                   self.customer['phone3'],
-                   self.customer['phone4'],
-                   self.customer['e_mail'],
-                   self.customer['omega_cate'],
-                   self.customer['yarn_cate'],
-                   self.customer['factory_cate'],
-                   self.customer['size'],
-                   self.customer['factory'],
-                   self.customer['yarn'],
-                   self.customer['omega'],
-                   self.customer['cust_type'],
-                   self.customer['by']
+            row = [self.customer['i'],  # 0
+                   self.customer['sales_yarn'],  # 1
+                   self.customer['sales_omega'],  # 2
+                   self.customer['sales_cloth'],  # 3
+                   self.customer['name'],  # 4
+                   self.customer['contact_p'],  # 5
+                   self.customer['branch'],  # 6
+                   self.customer['area'],  # 7
+                   self.customer['address'],  # 8
+                   self.customer['phone1'],  # 9
+                   self.customer['phone2'],  # 10
+                   self.customer['phone3'],  # 11
+                   self.customer['phone4'],  # 12
+                   self.customer['e_mail'],  # 13
+                   self.customer['omega_cate'],  # 14
+                   self.customer['yarn_cate'],  # 15
+                   self.customer['factory_cate'],  # 16
+                   self.customer['size'],  # 17
+                   self.customer['factory'],  # 18
+                   self.customer['yarn'],  # 19
+                   self.customer['omega'],  # 20
+                   self.customer['cust_type'],  # 21
+                   self.customer['by']  # 22
                    ]
 
             if self.mode == 'n':
-                self.sheet.insert_row(list(map(str, row)), self.len_data + 3)
+                customers = pd.DataFrame.from_dict(self.sheet.get_all_records())
+                customers = customers.drop(index=0)
+                customers = customers.replace(np.nan, 0)
+
+                print(type(customers['phone1'].values[-1]))
+                try:
+                    phone1 = int(row[9])
+                except:
+                    phone1 = 0
+
+                try:
+                    phone2 = int(row[10])
+                except:
+                    phone2 = 0
+
+                try:
+                    phone3 = int(row[11])
+                except:
+                    phone3 = 0
+
+                try:
+                    phone4 = int(row[12])
+                except:
+                    phone4 = 0
+
+                result = customers[(customers['phone1'] == phone1) |
+                                   (customers['phone1'] == phone2) |
+                                   (customers['phone1'] == phone3) |
+                                   (customers['phone1'] == phone4) |
+                                   (customers['phone2'] == phone1) |
+                                   (customers['phone2'] == phone2) |
+                                   (customers['phone2'] == phone3) |
+                                   (customers['phone2'] == phone4) |
+                                   (customers['phone3'] == phone1) |
+                                   (customers['phone3'] == phone2) |
+                                   (customers['phone3'] == phone3) |
+                                   (customers['phone3'] == phone4) |
+                                   (customers['phone4'] == phone1) |
+                                   (customers['phone4'] == phone2) |
+                                   (customers['phone4'] == phone3) |
+                                   (customers['phone4'] == phone4)]
+
+                if len(result) == 0:
+                    row[0] = max(customers['i'].values) + 1
+                    row = list(map(str, row))
+                    self.sheet.insert_row(row, len(customers) + 3)
+                    self.done.emit('نجح', 'تم الاضافه بنجاح')
+                else:
+                    self.error.emit('هذا العميل موجود من قبل')
             else:
                 if self.auth_type == 'admin':
                     for col in range(len(row)):
                         self.sheet.update_cell(self.sheet_row_index, col + 1, str(row[col]))
+                    self.done.emit('نجح', 'تم التعديل بنجاح')
                 else:
-                    row = [['new'] + row,
-                           ['old'] + [self.old_customer['i'],
-                                      self.old_customer['sales_yarn'],
-                                      self.old_customer['sales_omega'],
-                                      self.old_customer['sales_cloth'],
-                                      self.old_customer['name'],
-                                      self.old_customer['contact_p'],
-                                      self.old_customer['branch'],
-                                      self.old_customer['area'],
-                                      self.old_customer['address'],
-                                      self.old_customer['phone1'],
-                                      self.old_customer['phone2'],
-                                      self.old_customer['phone3'],
-                                      self.old_customer['phone4'],
-                                      self.old_customer['e_mail'],
-                                      self.old_customer['omega_cate'],
-                                      self.old_customer['yarn_cate'],
-                                      self.old_customer['factory_cate'],
-                                      self.old_customer['size'],
-                                      self.old_customer['factory'],
-                                      self.old_customer['yarn'],
-                                      self.old_customer['omega'],
-                                      self.old_customer['cust_type'],
-                                      self.old_customer['by']]
-                           ]
+                    edit_requests = pd.DataFrame.from_dict(self.sheet_requests.get_all_records())
+                    edit_requests = edit_requests.drop(index=0)
+                    edit_requests = edit_requests.replace(np.nan, '')
 
-                    pass
+                    if not self.customer['i'] in edit_requests['i'].values:
+                        self.sheet_requests.insert_row(list(map(str, ['new'] + row)), 3)
+                        self.sheet_requests.insert_row(list(map(str, ['old'] + [self.old_customer['i'],
+                                                                                self.old_customer['sales_yarn'],
+                                                                                self.old_customer['sales_omega'],
+                                                                                self.old_customer['sales_cloth'],
+                                                                                self.old_customer['name'],
+                                                                                self.old_customer['contact_p'],
+                                                                                self.old_customer['branch'],
+                                                                                self.old_customer['area'],
+                                                                                self.old_customer['address'],
+                                                                                self.old_customer['phone1'],
+                                                                                self.old_customer['phone2'],
+                                                                                self.old_customer['phone3'],
+                                                                                self.old_customer['phone4'],
+                                                                                self.old_customer['e_mail'],
+                                                                                self.old_customer['omega_cate'],
+                                                                                self.old_customer['yarn_cate'],
+                                                                                self.old_customer['factory_cate'],
+                                                                                self.old_customer['size'],
+                                                                                self.old_customer['factory'],
+                                                                                self.old_customer['yarn'],
+                                                                                self.old_customer['omega'],
+                                                                                self.old_customer['cust_type'],
+                                                                                self.old_customer['by']])), 3)
+                        self.done.emit('', 'تم تقديم طلب للتعديل ...')
+                    else:
+                        self.error.emit('تم طلب تعديل من قبل لنفس العميل ...')
 
-            self.done.emit()
         except Exception as e:
             self.error.emit(str(e))

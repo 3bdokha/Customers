@@ -34,5 +34,5 @@
 # print(auth)
 
 x = [1, 2, 3]
-
-print([0] + x)
+x[0] = 10
+print(x)

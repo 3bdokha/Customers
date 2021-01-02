@@ -10,6 +10,7 @@ import json
 
 class MainForm(QMainWindow, Ui_MainWindow):
     len_row = 0
+    _data = None
     customers = None
     categories = None
     sales_p = None
@@ -17,6 +18,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
     sheet_customers = None
     sheet_requests = None
     first = True
+    data_mode = 'c'
 
     d_header = ['i', 'name', 'phone1', 'phone2', 'address', 'sales_yarn']
 
@@ -43,6 +45,8 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.cbColth.stateChanged.connect(self._filter)
         self.cbOmega.stateChanged.connect(self._filter)
         self.cbYarn.stateChanged.connect(self._filter)
+        self.btnSearchData.clicked.connect(self.customer_data)
+        self.btnRefresh.clicked.connect(self.requests_data)
 
         # Filter by Customer type
         self.cbTager.stateChanged.connect(self._filter)
@@ -82,8 +86,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.groupBox_53.setEnabled(False)
         self.btnRefresh.setEnabled(False)
         self.actionNew_Customer.setEnabled(False)
-
-        self.btnRefresh.clicked.connect(self.fill_controls)
+        self.btnSearchData.setVisible(False)
 
     def starting_thread(self):
         self.loading.start_dialog()
@@ -108,13 +111,22 @@ class MainForm(QMainWindow, Ui_MainWindow):
         QMessageBox.warning(self, 'ERROR!', error)
 
     def get_data(self, customers, categories, sales_p, edit_requests, sheet_customers, sheet_requests, internet):
-        self.customers = customers
+        try:
+            self._data = customers if self.data_mode == 'c' else edit_requests[edit_requests['type'] == 'old']
+        except:
+            self._data = customers if self.data_mode == 'c' else edit_requests
+
         self.categories = categories
         self.sales_p = sales_p
         self.edit_requests = edit_requests
+        self.customers = customers
         self.sheet_customers = sheet_customers
         self.sheet_requests = sheet_requests
         self.lblInternet.setText(internet)
+        try:
+            self.lcdNumber.setValue(len(edit_requests[edit_requests['type'] == 'old']))
+        except:
+            self.lcdNumber.setValue(0)
 
         if not self.comName.isEnabled():
             self.fill_controls()
@@ -129,7 +141,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.loading.stop_dialog()
 
     def fill_controls(self):
-        self.fill_table(data=self.customers[self.d_header].values.tolist())
+        self.fill_table(data=self._data[self.d_header].values.tolist())
 
     def fill_table(self, data=None):
 
@@ -160,12 +172,13 @@ class MainForm(QMainWindow, Ui_MainWindow):
         index = self.twResalt.currentRow()
         code = int(self.twResalt.item(index, 0).text())
         self.details = DetailsDialog()
-        self.details.customer = self.customers[self.customers['i'] == int(code)]
-        self.details.sheet_row_index = self.customers[self.customers['i'] == int(code)].index[-1] + 2
+        self.details.customer = self._data[self._data['i'] == int(code)]
+        self.details.sheet_row_index = self._data[self._data['i'] == int(code)].index[-1] + 2
         self.details.categories = self.categories
         self.details.sheet_customers = self.sheet_customers
+        self.details.sheet_requests = self.sheet_requests
         self.details.sales_p = self.sales_p
-        self.details.len_data = len(self.customers)
+        self.details.len_data = len(self._data)
         self.details.mode = 'v'
         self.details.auth = self.auth
         self.details.setup_edit_view_mode(e_mode=False)
@@ -176,11 +189,12 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.details = DetailsDialog()
         self.details.categories = self.categories
         self.details.sheet_customers = self.sheet_customers
+        self.details.sheet_requests = self.sheet_requests
         self.details.sales_p = self.sales_p
-        self.details.len_data = len(self.customers)
+        self.details.len_data = len(self._data)
         self.details.mode = 'n'
         self.details.auth = self.auth
-        self.details.sheet_row_index = self.customers['i'].values[-1]
+        self.details.sheet_row_index = self._data['i'].values[-1]
         self.details.setup_edit_view_mode(e_mode=True)
         self.details.show()
 
@@ -204,11 +218,11 @@ class MainForm(QMainWindow, Ui_MainWindow):
 
         # Companies Filter
         if all(cb_companies):
-            result = self.customers[
-                (self.customers['yarn'] == 1) & (self.customers['omega'] == 1) & (self.customers['factory'] == 1)]
+            result = self._data[
+                (self._data['yarn'] == 1) & (self._data['omega'] == 1) & (self._data['factory'] == 1)]
             self.fill_table(data=result[self.d_header].values.tolist())
         elif not any(cb_companies):
-            result = self.customers
+            result = self._data
 
             self.fill_table(data=result[self.d_header].values.tolist())
 
@@ -216,7 +230,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
 
             for i in range(len(cb_companies)):
                 if cb_companies[i]:
-                    result = self.customers[(self.customers[_companies[i]] == 1)]
+                    result = self._data[(self._data[_companies[i]] == 1)]
 
             self.fill_table(data=result[self.d_header].values.tolist())
 
@@ -234,10 +248,10 @@ class MainForm(QMainWindow, Ui_MainWindow):
             omega = 1 if self.cbOmega.isChecked() else ''
             cloth = 1 if self.cbColth.isChecked() else ''
 
-            result = self.customers[
-                (self.customers['yarn'] == yarn) &
-                (self.customers['omega'] == omega) &
-                (self.customers['factory'] == cloth)
+            result = self._data[
+                (self._data['yarn'] == yarn) &
+                (self._data['omega'] == omega) &
+                (self._data['factory'] == cloth)
                 ]
 
             self.fill_table(data=result[self.d_header].values.tolist())
@@ -351,3 +365,20 @@ class MainForm(QMainWindow, Ui_MainWindow):
         vbar.setValue(vbar.minimum())
 
         # self.scrollArea.setVerticalScrollBar(QScrollBar.to)
+
+    def customer_data(self):
+        self.btnRefresh.setVisible(True)
+        self.btnSearchData.setVisible(False)
+        self._data = self.customers
+        self.fill_controls()
+        self.data_mode = 'c'
+
+    def requests_data(self):
+        self.btnRefresh.setVisible(False)
+        self.btnSearchData.setVisible(True)
+        try:
+            self._data = self.edit_requests[self.edit_requests['type'] == 'old']
+        except:
+            self._data = self.edit_requests
+        self.fill_controls()
+        self.data_mode = 'e'

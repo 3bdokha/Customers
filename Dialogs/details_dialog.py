@@ -47,6 +47,7 @@ class DetailsDialog(QDialog, Ui_details):
         self.len_data = None
         self.categories = None
         self.sheet_customers = None
+        self.sheet_requests = None
         self.sales_p = None
         self.customer_ = None
         self.old_edit = None
@@ -324,19 +325,18 @@ class DetailsDialog(QDialog, Ui_details):
     def add_cate(self, com_obj, cate_name, tw_obj):
         cate = com_obj.currentText()
         if cate != '':
-            if len(self.cates[cate_name]) > 0 and self.categories[self.categories[cate_name] == cate].sheet_row_index[
-                -1] == 0:
+            if len(self.cates[cate_name]) > 0 and self.categories[self.categories[cate_name] == cate].index[-1] == 0:
                 self.rows[cate_name] = 0
                 self.cates[cate_name] = []
 
-            if f"{self.categories[self.categories[cate_name] == cate].sheet_row_index[-1]}," not in self.cates[
+            if f"{self.categories[self.categories[cate_name] == cate].index[-1]}," not in self.cates[
                 cate_name] \
                     and f'0,' not in self.cates[cate_name]:
 
                 self.rows[cate_name] += 1
                 self.fill_table_new(data=cate, obj=tw_obj, len_rows=self.rows[cate_name])
                 self.cates[cate_name].append(
-                    f"{self.categories[self.categories[cate_name] == cate].sheet_row_index[-1]},")
+                    f"{self.categories[self.categories[cate_name] == cate].index[-1]},")
                 com_obj.setCurrentIndex(0)
             else:
                 com_obj.setCurrentIndex(0)
@@ -429,6 +429,7 @@ class DetailsDialog(QDialog, Ui_details):
                     thread = Save(self)
                     thread.customer = self.customer_
                     thread.sheet = self.sheet_customers
+                    thread.sheet_requests = self.sheet_requests
                     thread.mode = self.mode
                     thread.len_data = self.len_data
                     thread.sheet_row_index = self.sheet_row_index
@@ -448,8 +449,8 @@ class DetailsDialog(QDialog, Ui_details):
         else:
             self.thread_error('لم تتم اي تغيرات ...')
 
-    def has_been_saved(self):
-        QMessageBox.information(self, 'Success', 'تم الاضافه بنجاح')
+    def has_been_saved(self, head, msg):
+        QMessageBox.information(self, head, msg)
         self.loading.stop_dialog()
 
     def create_obj(self):

@@ -618,7 +618,7 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
           <property name="title">
            <string/>
           </property>
-          <layout class="QHBoxLayout" name="horizontalLayout_34" stretch="1,0,5,5">
+          <layout class="QHBoxLayout" name="horizontalLayout_34" stretch="1,0,0,0,5,5">
            <item>
             <widget class="QPushButton" name="btnRefresh">
              <property name="sizePolicy">
@@ -641,7 +641,75 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
               </font>
              </property>
              <property name="text">
-              <string>تحديث</string>
+              <string>طلبات التعديل</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btnSearchData">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>42</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>12</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>البحث</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="lcdNumber">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>42</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <family>MS Shell Dlg 2</family>
+               <pointsize>16</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+             <property name="buttonSymbols">
+              <enum>QAbstractSpinBox::NoButtons</enum>
+             </property>
+             <property name="maximum">
+              <number>9999</number>
              </property>
             </widget>
            </item>
@@ -1417,7 +1485,7 @@ font-weight: bold;</string>
                        <widget class="QWidget" name="scrollAreaWidgetContents_2">
                         <property name="geometry">
                          <rect>
-                          <x>-80</x>
+                          <x>-88</x>
                           <y>0</y>
                           <width>161</width>
                           <height>396</height>
@@ -1626,7 +1694,7 @@ font-weight: bold;</string>
                        <widget class="QWidget" name="scrollAreaWidgetContents_3">
                         <property name="geometry">
                          <rect>
-                          <x>-83</x>
+                          <x>-91</x>
                           <y>0</y>
                           <width>164</width>
                           <height>84</height>
