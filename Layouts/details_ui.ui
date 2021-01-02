@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1241</width>
-    <height>815</height>
+    <height>840</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -555,7 +555,7 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
         <x>0</x>
         <y>0</y>
         <width>1221</width>
-        <height>795</height>
+        <height>820</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
@@ -1075,18 +1075,100 @@ QTableWidget:item:selected
                 <property name="alignment">
                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                 </property>
-                <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,1,0">
+                <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,0">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>9</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
                  <item>
-                  <widget class="QComboBox" name="comSalesP">
-                   <property name="font">
-                    <font>
-                     <pointsize>-1</pointsize>
-                     <weight>75</weight>
-                     <bold>true</bold>
-                    </font>
-                   </property>
+                  <widget class="QGroupBox" name="groupBox_17">
                    <property name="styleSheet">
-                    <string notr="true">background-color: #D7CCC8;
+                    <string notr="true">QGroupBox{
+ background-color:rgba(66,66,66,20%);
+}</string>
+                   </property>
+                   <property name="title">
+                    <string/>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_12" stretch="0,0,0">
+                    <property name="leftMargin">
+                     <number>7</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>7</number>
+                    </property>
+                    <property name="rightMargin">
+                     <number>7</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>7</number>
+                    </property>
+                    <item>
+                     <layout class="QVBoxLayout" name="verticalLayout_14">
+                      <item>
+                       <widget class="QLabel" name="label_3">
+                        <property name="font">
+                         <font>
+                          <pointsize>10</pointsize>
+                          <weight>75</weight>
+                          <bold>true</bold>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>مسئول مبيعات القماش</string>
+                        </property>
+                        <property name="alignment">
+                         <set>Qt::AlignCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="Line" name="line_3">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLineEdit" name="txtSlaesCloth">
+                        <property name="enabled">
+                         <bool>true</bool>
+                        </property>
+                        <property name="font">
+                         <font>
+                          <pointsize>14</pointsize>
+                         </font>
+                        </property>
+                        <property name="alignment">
+                         <set>Qt::AlignCenter</set>
+                        </property>
+                        <property name="readOnly">
+                         <bool>true</bool>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QComboBox" name="comSalesCloth">
+                        <property name="font">
+                         <font>
+                          <pointsize>-1</pointsize>
+                          <weight>75</weight>
+                          <bold>true</bold>
+                         </font>
+                        </property>
+                        <property name="styleSheet">
+                         <string notr="true">background-color: #D7CCC8;
 border-width: 1px;
 border-color: #1e1e1e;
 border-radius: 6;
@@ -1095,31 +1177,175 @@ padding-left: 5px;
 padding-right: 5px;
 font-size: 17px;
 font-weight: bold;</string>
-                   </property>
-                   <property name="editable">
-                    <bool>true</bool>
-                   </property>
-                   <property name="insertPolicy">
-                    <enum>QComboBox::NoInsert</enum>
-                   </property>
-                   <property name="sizeAdjustPolicy">
-                    <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLineEdit" name="txtSlaesP">
-                   <property name="enabled">
-                    <bool>true</bool>
-                   </property>
-                   <property name="font">
-                    <font>
-                     <pointsize>14</pointsize>
-                    </font>
-                   </property>
-                   <property name="readOnly">
-                    <bool>true</bool>
-                   </property>
+                        </property>
+                        <property name="editable">
+                         <bool>true</bool>
+                        </property>
+                        <property name="insertPolicy">
+                         <enum>QComboBox::NoInsert</enum>
+                        </property>
+                        <property name="sizeAdjustPolicy">
+                         <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                    <item>
+                     <layout class="QVBoxLayout" name="verticalLayout_13">
+                      <item>
+                       <widget class="QLabel" name="label_2">
+                        <property name="font">
+                         <font>
+                          <pointsize>10</pointsize>
+                          <weight>75</weight>
+                          <bold>true</bold>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>مسئول مبيعات اوميجا</string>
+                        </property>
+                        <property name="alignment">
+                         <set>Qt::AlignCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="Line" name="line_2">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLineEdit" name="txtSlaesOmega">
+                        <property name="enabled">
+                         <bool>true</bool>
+                        </property>
+                        <property name="font">
+                         <font>
+                          <pointsize>14</pointsize>
+                         </font>
+                        </property>
+                        <property name="alignment">
+                         <set>Qt::AlignCenter</set>
+                        </property>
+                        <property name="readOnly">
+                         <bool>true</bool>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QComboBox" name="comSalesOmega">
+                        <property name="font">
+                         <font>
+                          <pointsize>-1</pointsize>
+                          <weight>75</weight>
+                          <bold>true</bold>
+                         </font>
+                        </property>
+                        <property name="styleSheet">
+                         <string notr="true">background-color: #D7CCC8;
+border-width: 1px;
+border-color: #1e1e1e;
+border-radius: 6;
+padding: 3px;
+padding-left: 5px;
+padding-right: 5px;
+font-size: 17px;
+font-weight: bold;</string>
+                        </property>
+                        <property name="editable">
+                         <bool>true</bool>
+                        </property>
+                        <property name="insertPolicy">
+                         <enum>QComboBox::NoInsert</enum>
+                        </property>
+                        <property name="sizeAdjustPolicy">
+                         <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                    <item>
+                     <layout class="QVBoxLayout" name="verticalLayout_8">
+                      <item>
+                       <widget class="QLabel" name="label">
+                        <property name="font">
+                         <font>
+                          <pointsize>10</pointsize>
+                          <weight>75</weight>
+                          <bold>true</bold>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>مسئول مبيعات الغزل</string>
+                        </property>
+                        <property name="alignment">
+                         <set>Qt::AlignCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="Line" name="line">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLineEdit" name="txtSlaesYarn">
+                        <property name="enabled">
+                         <bool>true</bool>
+                        </property>
+                        <property name="font">
+                         <font>
+                          <pointsize>14</pointsize>
+                         </font>
+                        </property>
+                        <property name="alignment">
+                         <set>Qt::AlignCenter</set>
+                        </property>
+                        <property name="readOnly">
+                         <bool>true</bool>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QComboBox" name="comSalesYarn">
+                        <property name="font">
+                         <font>
+                          <pointsize>-1</pointsize>
+                          <weight>75</weight>
+                          <bold>true</bold>
+                         </font>
+                        </property>
+                        <property name="styleSheet">
+                         <string notr="true">background-color: #D7CCC8;
+border-width: 1px;
+border-color: #1e1e1e;
+border-radius: 6;
+padding: 3px;
+padding-left: 5px;
+padding-right: 5px;
+font-size: 17px;
+font-weight: bold;</string>
+                        </property>
+                        <property name="editable">
+                         <bool>true</bool>
+                        </property>
+                        <property name="insertPolicy">
+                         <enum>QComboBox::NoInsert</enum>
+                        </property>
+                        <property name="sizeAdjustPolicy">
+                         <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                   </layout>
                   </widget>
                  </item>
                  <item>
@@ -1154,7 +1380,7 @@ font-weight: bold;</string>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_8">
                  <item>
-                  <widget class="QLineEdit" name="txtAdmin">
+                  <widget class="QLineEdit" name="txtContactPerson">
                    <property name="font">
                     <font>
                      <pointsize>14</pointsize>

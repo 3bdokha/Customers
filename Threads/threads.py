@@ -211,8 +211,8 @@ class Save(QThread):
 
     def run(self):
         try:
-            index = self.index + 1 if self.mode == 'n' else self.index
-            row = [index, '', self.customer['sales_yarn'], '', '', self.customer['name'], self.customer['contact_p'], '',
+            row = [self.customer['i'], '', self.customer['sales_yarn'], self.customer['sales_omega'], self.customer['sales_cloth'],
+                   self.customer['name'], self.customer['contact_p'], '',
                    self.customer['address'], self.customer['phone1'], self.customer['phone2'], self.customer['phone3'],
                    self.customer['phone4'], self.customer['e_mail'], self.customer['omega_cate'],
                    self.customer['yarn_cate'], self.customer['factory_cate'], self.customer['size'],

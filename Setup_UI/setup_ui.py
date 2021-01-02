@@ -26,45 +26,45 @@ class MainForm(QMainWindow, Ui_MainWindow):
         # self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.loading = Loading()
         self.starting_thread()
-        self.comName.currentTextChanged.connect(self.filter)
-        self.comPhone.currentTextChanged.connect(self.filter)
-        self.comContactPerson.currentTextChanged.connect(self.filter)
-        self.comSalesPerson.currentTextChanged.connect(self.filter)
+        self.comName.currentTextChanged.connect(self._filter)
+        self.comPhone.currentTextChanged.connect(self._filter)
+        self.comContactPerson.currentTextChanged.connect(self._filter)
+        self.comSalesPerson.currentTextChanged.connect(self._filter)
         self.twResalt.itemDoubleClicked.connect(self.on_click_item)
         self.btnReset.clicked.connect(self.reset)
         self.actionNew_Customer.triggered.connect(self.new_customer)
 
         # Filter by company
-        self.cbColth.stateChanged.connect(self.filter)
-        self.cbOmega.stateChanged.connect(self.filter)
-        self.cbYarn.stateChanged.connect(self.filter)
+        self.cbColth.stateChanged.connect(self._filter)
+        self.cbOmega.stateChanged.connect(self._filter)
+        self.cbYarn.stateChanged.connect(self._filter)
 
         # Filter by Customer type
-        self.cbTager.stateChanged.connect(self.filter)
-        self.cbTgerCloth.stateChanged.connect(self.filter)
-        self.cbFactory.stateChanged.connect(self.filter)
+        self.cbTager.stateChanged.connect(self._filter)
+        self.cbTgerCloth.stateChanged.connect(self._filter)
+        self.cbFactory.stateChanged.connect(self._filter)
 
         # filter by yarn categories
-        self.cateYarnAll.stateChanged.connect(self.filter)
-        self.cateSbun.stateChanged.connect(self.filter)
-        self.cateCotton.stateChanged.connect(self.filter)
-        self.cateFesskoz.stateChanged.connect(self.filter)
-        self.cateLekra.stateChanged.connect(self.filter)
-        self.cateShoayrat.stateChanged.connect(self.filter)
-        self.cateMobant.stateChanged.connect(self.filter)
-        self.catePolyster.stateChanged.connect(self.filter)
-        self.cateMix.stateChanged.connect(self.filter)
+        self.cateYarnAll.stateChanged.connect(self._filter)
+        self.cateSbun.stateChanged.connect(self._filter)
+        self.cateCotton.stateChanged.connect(self._filter)
+        self.cateFesskoz.stateChanged.connect(self._filter)
+        self.cateLekra.stateChanged.connect(self._filter)
+        self.cateShoayrat.stateChanged.connect(self._filter)
+        self.cateMobant.stateChanged.connect(self._filter)
+        self.catePolyster.stateChanged.connect(self._filter)
+        self.cateMix.stateChanged.connect(self._filter)
 
         # filter by omega categories
-        self.cateOmegaAll.stateChanged.connect(self.filter)
-        self.cateHyaka.stateChanged.connect(self.filter)
-        self.cateHarer.stateChanged.connect(self.filter)
-        self.catePolysterTatrez.stateChanged.connect(self.filter)
-        self.cateCerma.stateChanged.connect(self.filter)
-        self.cateQassab.stateChanged.connect(self.filter)
-        self.cateGoma.stateChanged.connect(self.filter)
-        self.cateSpray.stateChanged.connect(self.filter)
-        self.cateFazlin.stateChanged.connect(self.filter)
+        self.cateOmegaAll.stateChanged.connect(self._filter)
+        self.cateHyaka.stateChanged.connect(self._filter)
+        self.cateHarer.stateChanged.connect(self._filter)
+        self.catePolysterTatrez.stateChanged.connect(self._filter)
+        self.cateCerma.stateChanged.connect(self._filter)
+        self.cateQassab.stateChanged.connect(self._filter)
+        self.cateGoma.stateChanged.connect(self._filter)
+        self.cateSpray.stateChanged.connect(self._filter)
+        self.cateFazlin.stateChanged.connect(self._filter)
 
         # Display Categories
         self.btnYarn.clicked.connect(lambda: self.swCates.setCurrentIndex(0))
@@ -112,7 +112,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         if not self.comName.isEnabled():
             self.fill_controls()
         else:
-            self.filter()
+            self._filter()
 
         self.comName.setEnabled(1)
         self.comPhone.setEnabled(1)
@@ -175,7 +175,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.details.setup_edit_view_mode(e_mode=True)
         self.details.show()
 
-    def filter(self):
+    def _filter(self):
         cb_companies = np.array([self.cbYarn.isChecked(), self.cbOmega.isChecked(), self.cbColth.isChecked()])
         cb_ctype = np.array([self.cbTager.isChecked(), self.cbFactory.isChecked(), self.cbTgerCloth.isChecked()])
         cb_cate_yarn = np.array([self.cateYarnAll.isChecked(), self.cateSbun.isChecked(), self.cateCotton.isChecked(),

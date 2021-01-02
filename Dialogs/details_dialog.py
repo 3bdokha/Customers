@@ -14,6 +14,18 @@ class DetailsDialog(QDialog, Ui_details):
         self.setWindowIcon(QtGui.QIcon('Assets\\icon.ico'))
         self.btnEdit.clicked.connect(lambda: self.setup_edit_view_mode(e_mode=True))
 
+        self.comSalesYarn.setEnabled(self.cbYarn.isChecked())
+        self.comSalesOmega.setEnabled(self.cbOmega.isChecked())
+        self.comSalesCloth.setEnabled(self.cbCloth.isChecked())
+
+        self.comYarn.setEnabled(self.cbYarn.isChecked())
+        self.comOmega.setEnabled(self.cbOmega.isChecked())
+        self.comCloth.setEnabled(self.cbCloth.isChecked())
+
+        self.cbYarn.stateChanged.connect(lambda: self.state_changed('yarn'))
+        self.cbOmega.stateChanged.connect(lambda: self.state_changed('omega'))
+        self.cbCloth.stateChanged.connect(lambda: self.state_changed('cloth'))
+
         self.btnYarn.clicked.connect(lambda: self.add_cate(self.comYarn, 'yarn', self.twYarn))
         self.btnOmega.clicked.connect(lambda: self.add_cate(self.comOmega, 'omega', self.twOmega))
         self.btnCloth.clicked.connect(lambda: self.add_cate(self.comCloth, 'cloth', self.twCloth))
@@ -62,10 +74,12 @@ class DetailsDialog(QDialog, Ui_details):
 
         self.lblName.setText(self.customer['name'].values[-1])
 
-        self.txtSlaesP.setText(self.customer['sales_yarn'].values[-1])
-        self.comSalesP.setCurrentText(self.customer['sales_yarn'].values[-1])
+        self.txtSlaesYarn.setText(self.customer['sales_yarn'].values[-1])
+        self.txtSlaesOmega.setText(self.customer['sales_omega'].values[-1])
+        self.txtSlaesCloth.setText(self.customer['sales_cloth'].values[-1])
+        self.comSalesYarn.setCurrentText(self.customer['sales_yarn'].values[-1])
 
-        self.txtAdmin.setText(self.customer['contact_p'].values[-1])
+        self.txtContactPerson.setText(self.customer['contact_p'].values[-1])
         self.txtAdrress.setText(self.customer['address'].values[-1])
         self.txtMail.setText(self.customer['e_mail'].values[-1])
         self.txtPhone1.setText(
@@ -107,11 +121,48 @@ class DetailsDialog(QDialog, Ui_details):
         thread.error.connect(self.thread_error)
         thread.start()
 
+    def state_changed(self, company):
+        sales = {
+            'yarn': self.comSalesYarn,
+            'omega': self.comSalesOmega,
+            'cloth': self.comSalesCloth
+        }
+
+        cb = {
+            'yarn': self.cbYarn,
+            'omega': self.cbOmega,
+            'cloth': self.cbCloth
+        }
+
+        categories = {
+            'yarn': self.twYarn,
+            'omega': self.twOmega,
+            'cloth': self.twCloth
+        }
+
+        category_com = {
+            'yarn': self.comYarn,
+            'omega': self.comOmega,
+            'cloth': self.comCloth
+        }
+
+        sales[company].setEnabled(cb[company].isChecked())
+        if cb[company].isChecked():
+            category_com[company].setEnabled(True)
+        else:
+            self.cates[company] = []
+            self.rows[company] = 0
+            category_com[company].setEnabled(False)
+            category_com[company].setCurrentText('')
+            sales[company].setCurrentText('')
+
+            self.fill_table(data=self.cates[company], obj=categories[company], len_rows=self.rows[company],
+                            cate_name=company)
+
     def setup_edit_view_mode(self, e_mode=True):
 
         self.lblName.setReadOnly(not e_mode)
-        self.txtSlaesP.setReadOnly(not e_mode)
-        self.txtAdmin.setReadOnly(not e_mode)
+        self.txtContactPerson.setReadOnly(not e_mode)
         self.txtAdrress.setReadOnly(not e_mode)
         self.txtMail.setReadOnly(not e_mode)
         self.txtPhone1.setReadOnly(not e_mode)
@@ -135,11 +186,15 @@ class DetailsDialog(QDialog, Ui_details):
         self.cbOmega.setEnabled(e_mode)
         self.cbCloth.setEnabled(e_mode)
 
-        self.comSalesP.setVisible(e_mode)
+        self.comSalesYarn.setVisible(e_mode)
+        self.comSalesOmega.setVisible(e_mode)
+        self.comSalesCloth.setVisible(e_mode)
         self.comCustType.setVisible(e_mode)
         self.comSize.setVisible(e_mode)
 
-        self.txtSlaesP.setVisible(not e_mode)
+        self.txtSlaesYarn.setVisible(not e_mode)
+        self.txtSlaesOmega.setVisible(not e_mode)
+        self.txtSlaesCloth.setVisible(not e_mode)
         self.txtCustType.setVisible(not e_mode)
         self.txtSize.setVisible(not e_mode)
 
@@ -217,11 +272,23 @@ class DetailsDialog(QDialog, Ui_details):
             self.comCloth.addItem('')
             self.comCloth.addItems(self.categories['cloth'].values)
 
-            current_sales_p = self.comSalesP.currentText()
-            self.comSalesP.clear()
-            self.comSalesP.addItem('')
-            self.comSalesP.addItems(self.sales_p['name'].values)
-            self.comSalesP.setCurrentText(current_sales_p)
+            current_sales_yarn = self.comSalesYarn.currentText()
+            self.comSalesYarn.clear()
+            self.comSalesYarn.addItem('')
+            self.comSalesYarn.addItems(self.sales_p['name'].values)
+            self.comSalesYarn.setCurrentText(current_sales_yarn)
+
+            current_sales_omega = self.comSalesOmega.currentText()
+            self.comSalesOmega.clear()
+            self.comSalesOmega.addItem('')
+            self.comSalesOmega.addItems(self.sales_p['name'].values)
+            self.comSalesOmega.setCurrentText(current_sales_omega)
+
+            current_sales_cloth = self.comSalesCloth.currentText()
+            self.comSalesCloth.clear()
+            self.comSalesCloth.addItem('')
+            self.comSalesCloth.addItems(self.sales_p['name'].values)
+            self.comSalesCloth.setCurrentText(current_sales_cloth)
 
             current_cust_type = self.comCustType.currentText()
             self.comCustType.clear()
@@ -262,9 +329,12 @@ class DetailsDialog(QDialog, Ui_details):
     def save_(self):
 
         self.customer_ = {
+            'i': self.customer['i'].values[-1] if self.mode == 'v' else self.sheet_row_index + 1,
             'name': self.lblName.text(),
-            'sales_yarn': self.comSalesP.currentText(),
-            'contact_p': self.txtAdmin.text(),
+            'sales_yarn': self.comSalesYarn.currentText(),
+            'sales_omega': self.comSalesOmega.currentText(),
+            'sales_cloth': self.comSalesCloth.currentText(),
+            'contact_p': self.txtContactPerson.text(),
             'address': self.txtAdrress.text(),
             'e_mail': self.txtMail.text(),
             'phone1': self.txtPhone1.text(),
@@ -281,9 +351,14 @@ class DetailsDialog(QDialog, Ui_details):
             'factory': 1 if self.cbCloth.isChecked() else ''
         }
 
-        if self.customer_['name'] != 'Name' and self.customer_['name'] != '' and self.customer_['sales_yarn'] != '' and \
-                self.customer_['contact_p'] != '' and self.customer_['cust_type'] != '' and (
-                self.cbYarn.isChecked() + self.cbOmega.isChecked() + self.cbCloth.isChecked()) > 0:
+        if self.customer_['name'] != 'Name' and \
+                self.customer_['name'] != '' and \
+                (self.customer_['sales_yarn'] != '' or self.customer_['sales_omega'] != '' or
+                 self.customer_['sales_omega'] != '') and \
+                self.customer_['contact_p'] != '' \
+                and self.customer_['cust_type'] != '' and \
+                (self.cbYarn.isChecked() + self.cbOmega.isChecked() + self.cbCloth.isChecked()) > 0:
+
             if self.sheet_customers is not None:
                 thread = Save(self)
                 thread.customer = self.customer_
