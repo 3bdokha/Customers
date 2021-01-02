@@ -50,6 +50,7 @@ class DetailsDialog(QDialog, Ui_details):
         self.sales_p = None
         self.customer_ = None
         self.old_edit = None
+        self.auth = None
 
         self.cate_yarn = []
         self.cate_omega = []
@@ -77,19 +78,27 @@ class DetailsDialog(QDialog, Ui_details):
         self.txtSlaesYarn.setText(self.customer['sales_yarn'].values[-1])
         self.txtSlaesOmega.setText(self.customer['sales_omega'].values[-1])
         self.txtSlaesCloth.setText(self.customer['sales_cloth'].values[-1])
+
         self.comSalesYarn.setCurrentText(self.customer['sales_yarn'].values[-1])
+        self.comSalesOmega.setCurrentText(self.customer['sales_omega'].values[-1])
+        self.comSalesCloth.setCurrentText(self.customer['sales_cloth'].values[-1])
+
+        self.txtBranch.setText(self.customer['branch'].values[-1])
+        self.comBranch.setCurrentText(self.customer['branch'].values[-1])
+
+        self.txtArea.setText(self.customer['area'].values[-1])
 
         self.txtContactPerson.setText(self.customer['contact_p'].values[-1])
         self.txtAdrress.setText(self.customer['address'].values[-1])
         self.txtMail.setText(self.customer['e_mail'].values[-1])
         self.txtPhone1.setText(
-            f"0{self.customer['phone1'].values[-1]}" if self.customer['phone1'].values[-1] != '' else '')
+            f"{self.customer['phone1'].values[-1]}" if self.customer['phone1'].values[-1] != '' else '')
         self.txtPhone2.setText(
-            f"0{self.customer['phone2'].values[-1]}" if self.customer['phone2'].values[-1] != '' else '')
+            f"{self.customer['phone2'].values[-1]}" if self.customer['phone2'].values[-1] != '' else '')
         self.txtPhone3.setText(
-            f"0{self.customer['phone3'].values[-1]}" if self.customer['phone3'].values[-1] != '' else '')
+            f"{self.customer['phone3'].values[-1]}" if self.customer['phone3'].values[-1] != '' else '')
         self.txtPhone4.setText(
-            f"0{self.customer['phone4'].values[-1]}" if self.customer['phone4'].values[-1] != '' else '')
+            f"{self.customer['phone4'].values[-1]}" if self.customer['phone4'].values[-1] != '' else '')
 
         self.txtCustType.setText(self.customer['cust_type'].values[-1])
         self.comCustType.setCurrentText(self.customer['cust_type'].values[-1])
@@ -101,12 +110,14 @@ class DetailsDialog(QDialog, Ui_details):
         self.cbOmega.setChecked(True if self.customer['omega'].values[-1] == 1 else False)
         self.cbCloth.setChecked(True if self.customer['factory'].values[-1] == 1 else False)
 
-        self.fill_table(data=self.customer['yarn_cate'].values[-1], obj=self.twYarn,
-                        len_rows=len(self.customer['yarn_cate'].values[-1]), cate_name='yarn')
-        self.fill_table(data=self.customer['omega_cate'].values[-1], obj=self.twOmega,
-                        len_rows=len(self.customer['omega_cate'].values[-1]), cate_name='omega')
-        self.fill_table(data=self.customer['factory_cate'].values[-1], obj=self.twCloth,
-                        len_rows=len(self.customer['factory_cate'].values[-1]), cate_name='cloth')
+        self.fill_table(data=self.customer['yarn_cate_name'].values[-1], obj=self.twYarn,
+                        len_rows=len(self.customer['yarn_cate_name'].values[-1]), cate_name='yarn')
+        self.fill_table(data=self.customer['omega_cate_name'].values[-1], obj=self.twOmega,
+                        len_rows=len(self.customer['omega_cate_name'].values[-1]), cate_name='omega')
+        self.fill_table(data=self.customer['factory_cate_name'].values[-1], obj=self.twCloth,
+                        len_rows=len(self.customer['factory_cate_name'].values[-1]), cate_name='cloth')
+
+        print(self.auth)
 
     def print_customer(self):
         thread = PrintCustomer(self)
@@ -171,6 +182,7 @@ class DetailsDialog(QDialog, Ui_details):
         self.txtPhone4.setReadOnly(not e_mode)
         self.txtCustType.setReadOnly(not e_mode)
         self.txtSize.setReadOnly(not e_mode)
+        self.txtArea.setReadOnly(not e_mode)
 
         self.fYarn.setVisible(e_mode)
         self.fOmega.setVisible(e_mode)
@@ -191,12 +203,14 @@ class DetailsDialog(QDialog, Ui_details):
         self.comSalesCloth.setVisible(e_mode)
         self.comCustType.setVisible(e_mode)
         self.comSize.setVisible(e_mode)
+        self.comBranch.setVisible(e_mode)
 
         self.txtSlaesYarn.setVisible(not e_mode)
         self.txtSlaesOmega.setVisible(not e_mode)
         self.txtSlaesCloth.setVisible(not e_mode)
         self.txtCustType.setVisible(not e_mode)
         self.txtSize.setVisible(not e_mode)
+        self.txtBranch.setVisible(not e_mode)
 
         self.fill_combos()
 
@@ -292,13 +306,16 @@ class DetailsDialog(QDialog, Ui_details):
 
             current_cust_type = self.comCustType.currentText()
             self.comCustType.clear()
-            self.comCustType.addItem('')
             self.comCustType.addItems(['تاجر', 'مصنع', 'تاجر قماش'])
             self.comCustType.setCurrentText(current_cust_type)
 
+            current_branch = self.comBranch.currentText()
+            self.comBranch.clear()
+            self.comBranch.addItems(['القاهره', 'المحله'])
+            self.comBranch.setCurrentText(current_branch)
+
             current_size = self.comSize.currentText()
             self.comSize.clear()
-            self.comSize.addItem('')
             self.comSize.addItems(['صغير', 'متوسط', 'كبير'])
             self.comSize.setCurrentText(current_size)
 
@@ -327,7 +344,6 @@ class DetailsDialog(QDialog, Ui_details):
             tw_obj.removeRow(index)
 
     def save_(self):
-
         self.customer_ = {
             'i': self.customer['i'].values[-1] if self.mode == 'v' else self.sheet_row_index + 1,
             'name': self.lblName.text(),
@@ -335,6 +351,8 @@ class DetailsDialog(QDialog, Ui_details):
             'sales_omega': self.comSalesOmega.currentText(),
             'sales_cloth': self.comSalesCloth.currentText(),
             'contact_p': self.txtContactPerson.text(),
+            'branch': self.comBranch.currentText(),
+            'area': self.txtArea.text(),
             'address': self.txtAdrress.text(),
             'e_mail': self.txtMail.text(),
             'phone1': self.txtPhone1.text(),
@@ -343,40 +361,58 @@ class DetailsDialog(QDialog, Ui_details):
             'phone4': self.txtPhone4.text(),
             'cust_type': self.comCustType.currentText(),
             'size': self.comSize.currentText(),
+            'yarn': 1 if self.cbYarn.isChecked() else '',
+            'omega': 1 if self.cbOmega.isChecked() else '',
+            'factory': 1 if self.cbCloth.isChecked() else '',
             'yarn_cate': ''.join(self.cates['yarn'])[:-1] if len(self.cates['yarn']) > 0 else '',
             'omega_cate': ''.join(self.cates['omega'])[:-1] if len(self.cates['omega']) > 0 else '',
             'factory_cate': ''.join(self.cates['cloth'])[:-1] if len(self.cates['cloth']) > 0 else '',
-            'yarn': 1 if self.cbYarn.isChecked() else '',
-            'omega': 1 if self.cbOmega.isChecked() else '',
-            'factory': 1 if self.cbCloth.isChecked() else ''
+            'by': ''
         }
 
-        if self.customer_['name'] != 'Name' and \
-                self.customer_['name'] != '' and \
-                (self.customer_['sales_yarn'] != '' or self.customer_['sales_omega'] != '' or
-                 self.customer_['sales_omega'] != '') and \
-                self.customer_['contact_p'] != '' \
-                and self.customer_['cust_type'] != '' and \
-                (self.cbYarn.isChecked() + self.cbOmega.isChecked() + self.cbCloth.isChecked()) > 0:
+        edited = True
+        if self.mode == 'v':
+            edited = False
+            for key in self.customer_.keys():
+                print('here', key)
+                if self.customer_[key] != self.customer[key].values[-1]:
+                    edited = True
+                    try:
+                        if int(self.customer_[key]) == int(self.customer[key].values[-1]):
+                            edited = False
+                    except:
+                        pass
+                    break
 
-            if self.sheet_customers is not None:
-                thread = Save(self)
-                thread.customer = self.customer_
-                thread.sheet = self.sheet_customers
-                thread.mode = self.mode
-                thread.len_data = self.len_data
-                thread.index = self.sheet_row_index
-                thread.done.connect(self.has_been_saved)
-                thread.error.connect(self.thread_save_error)
-                thread.start()
+        if edited:
+            if self.customer_['name'] != 'Name' and \
+                    self.customer_['name'] != '' and \
+                    (self.customer_['sales_yarn'] != '' or self.customer_['sales_omega'] != '' or
+                     self.customer_['sales_omega'] != '') and \
+                    self.customer_['contact_p'] != '' \
+                    and self.customer_['cust_type'] != '' and \
+                    (self.cbYarn.isChecked() + self.cbOmega.isChecked() + self.cbCloth.isChecked()) > 0:
 
-                self.create_obj()
-                self.cancel_editing()
-                self.loading.start_dialog()
+                if self.sheet_customers is not None:
+                    thread = Save(self)
+                    thread.customer = self.customer_
+                    thread.sheet = self.sheet_customers
+                    thread.mode = self.mode
+                    thread.len_data = self.len_data
+                    thread.index = self.sheet_row_index
+                    thread.done.connect(self.has_been_saved)
+                    thread.error.connect(self.thread_save_error)
+                    thread.start()
+
+                    self.create_obj()
+                    self.cancel_editing()
+                    self.loading.start_dialog()
+                else:
+                    self.thread_error('تحقق من الاتصال بالانترنت ...')
             else:
-                self.thread_error('تحقق من الاتصال بالانترنت ...')
+                self.thread_error('برجاء ادخال جميع البيانات المطلوبه (*) اولا ...')
         else:
-            self.thread_error('برجاء ادخال جميع البيانات المطلوبه (*) اولا ...')
+            self.thread_error('لم تتم اي تغيرات ...')
 
     def has_been_saved(self):
         QMessageBox.information(self, 'Success', 'تم الاضافه بنجاح')
@@ -388,14 +424,16 @@ class DetailsDialog(QDialog, Ui_details):
 
         self.customer = pd.DataFrame(data=[self.customer_.values()], columns=self.customer_.keys())
 
-        self.customer['yarn_cate'] = self.customer['yarn_cate'].apply(lambda x: self.categories['yarn'].loc[
+        self.customer['yarn_cate_name'] = self.customer['yarn_cate'].apply(lambda x: self.categories['yarn'].loc[
             list(map(int, x.split(','))) if not isinstance(x, int) and x != '' else [] if x == '' else [
                 x]].values)
 
-        self.customer['omega_cate'] = self.customer['omega_cate'].apply(lambda x: self.categories['omega'].loc[
-            list(map(int, x.split(','))) if not isinstance(x, int) and x != '' else [] if x == '' else [
-                x]].values)
+        self.customer['omega_cate_name'] = self.customer['omega_cate'].apply(
+            lambda x: self.categories['omega'].loc[
+                list(map(int, x.split(','))) if not isinstance(x, int) and x != '' else [] if x == '' else [
+                    x]].values)
 
-        self.customer['factory_cate'] = self.customer['factory_cate'].apply(lambda x: self.categories['cloth'].loc[
-            list(map(int, x.split(','))) if not isinstance(x, int) and x != '' else [] if x == '' else [
-                x]].values)
+        self.customer['factory_cate_name'] = self.customer['factory_cate'].apply(
+            lambda x: self.categories['cloth'].loc[
+                list(map(int, x.split(','))) if not isinstance(x, int) and x != '' else [] if x == '' else [
+                    x]].values)

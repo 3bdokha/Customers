@@ -5,6 +5,7 @@ from Threads import threads as th
 from Dialogs.details_dialog import DetailsDialog
 import numpy as np
 from Dialogs.loading_dialog import Loading
+import json
 
 
 class MainForm(QMainWindow, Ui_MainWindow):
@@ -22,6 +23,8 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.setWindowIcon(QtGui.QIcon('Assets\\icon.ico'))
         self.setWindowTitle('Customers - Main Window')
+
+        self.auth = json.load(open('Assets/Tokens/Omega.json'))['client_email'].split('@')[0]
 
         # self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.loading = Loading()
@@ -160,6 +163,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.details.sales_p = self.sales_p
         self.details.len_data = len(self.customers)
         self.details.mode = 'v'
+        self.details.auth = self.auth
         self.details.setup_edit_view_mode(e_mode=False)
         self.details.set_data()
         self.details.show()
@@ -171,6 +175,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.details.sales_p = self.sales_p
         self.details.len_data = len(self.customers)
         self.details.mode = 'n'
+        self.details.auth = self.auth
         self.details.sheet_row_index = self.customers['i'].values[-1]
         self.details.setup_edit_view_mode(e_mode=True)
         self.details.show()
@@ -246,26 +251,26 @@ class MainForm(QMainWindow, Ui_MainWindow):
 
         # Categories Filter
         '''
-            customers[customers.yarn_cate.apply(lambda x: 'فسكوز' in x)]
+            customers[customers.yarn_cate_name.apply(lambda x: 'فسكوز' in x)]
             x in ['b', 'a', 'foo', 'bar'] for x in ['a', 'b']
         '''
 
         # filter by yarn categories
         if len(result) > 0:
-            result = result[(result.yarn_cate.apply(
+            result = result[(result.yarn_cate_name.apply(
                 lambda categories: all(
                     item in categories for item in self.categories['yarn'].loc[_cate_yarn[cb_cate_yarn]].values)) | (
-                                 result.yarn_cate.apply(lambda x: 'الكل' in x)))]
+                                 result.yarn_cate_name.apply(lambda x: 'الكل' in x)))]
 
             self.fill_table(data=result[self.d_header].values.tolist())
 
         # filter by omega categories
         if len(result) > 0:
-            result = result[(result.omega_cate.apply(
+            result = result[(result.omega_cate_name.apply(
                 lambda categories: all(
                     item in categories for item in
                     self.categories['omega'].loc[_cate_omega[cb_cate_omega]].values))) | (
-                                result.omega_cate.apply(lambda x: 'الكل' in x))]
+                                result.omega_cate_name.apply(lambda x: 'الكل' in x))]
 
             self.fill_table(data=result[self.d_header].values.tolist())
 

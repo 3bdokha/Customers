@@ -132,15 +132,15 @@ class GetData(QThread):
                 sales_p = pd.DataFrame.from_dict(sheet_sales_p.get_all_records())
                 sales_p = sales_p.set_index('code')
 
-                customers['yarn_cate'] = customers['yarn_cate'].apply(lambda x: categories['yarn'].loc[
+                customers['yarn_cate_name'] = customers['yarn_cate'].apply(lambda x: categories['yarn'].loc[
                     list(map(int, x.split(','))) if not isinstance(x, int) and x != '' else [] if x == '' else [
                         x]].values)
 
-                customers['omega_cate'] = customers['omega_cate'].apply(lambda x: categories['omega'].loc[
+                customers['omega_cate_name'] = customers['omega_cate'].apply(lambda x: categories['omega'].loc[
                     list(map(int, x.split(','))) if not isinstance(x, int) and x != '' else [] if x == '' else [
                         x]].values)
 
-                customers['factory_cate'] = customers['factory_cate'].apply(lambda x: categories['cloth'].loc[
+                customers['factory_cate_name'] = customers['factory_cate'].apply(lambda x: categories['cloth'].loc[
                     list(map(int, x.split(','))) if not isinstance(x, int) and x != '' else [] if x == '' else [
                         x]].values)
 
@@ -157,7 +157,7 @@ class GetData(QThread):
                 self.data.emit(cust, cate, sales_p, None, INTERNET)
 
             print(INTERNET, datetime.time(datetime.now()))
-            time.sleep(5)
+            time.sleep(10)
 
 
 class PrintCustomer(QThread):
@@ -202,6 +202,8 @@ class PrintCustomer(QThread):
 class Save(QThread):
     sheet = None
     customer = None
+    old_customer = None
+    auth = None
     index = None
     mode = None
     len_data = None
@@ -211,19 +213,17 @@ class Save(QThread):
 
     def run(self):
         try:
-            row = [self.customer['i'], '', self.customer['sales_yarn'], self.customer['sales_omega'], self.customer['sales_cloth'],
-                   self.customer['name'], self.customer['contact_p'], '',
+            row = [self.customer['i'], self.customer['sales_yarn'], self.customer['sales_omega'], self.customer['sales_cloth'],
+                   self.customer['name'], self.customer['contact_p'], self.customer['branch'], self.customer['area'],
                    self.customer['address'], self.customer['phone1'], self.customer['phone2'], self.customer['phone3'],
                    self.customer['phone4'], self.customer['e_mail'], self.customer['omega_cate'],
                    self.customer['yarn_cate'], self.customer['factory_cate'], self.customer['size'],
                    self.customer['factory'], self.customer['yarn'], self.customer['omega'],
-                   self.customer['cust_type'], '']
+                   self.customer['cust_type'], self.customer['by']]
 
             if self.mode == 'n':
                 self.sheet.insert_row(list(map(str, row)), self.len_data + 3)
             else:
-                # self.sheet.update_cell(self.index, 1, str(self.index))
-                # self.sheet.update_row(self.index, list(map(str, row)))
                 for col in range(len(row)):
                     self.sheet.update_cell(self.index, col + 1, str(row[col]))
 
