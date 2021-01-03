@@ -1012,13 +1012,100 @@ QTableWidget:item:selected
              <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="0,0">
+             <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="0,1">
               <item>
-               <widget class="QToolButton" name="btnEdit">
-                <property name="text">
-                 <string>...</string>
+               <layout class="QVBoxLayout" name="verticalLayout_15" stretch="0,0,0,1">
+                <property name="spacing">
+                 <number>3</number>
                 </property>
-               </widget>
+                <item>
+                 <widget class="QRadioButton" name="rbOriginal">
+                  <property name="font">
+                   <font>
+                    <pointsize>10</pointsize>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="layoutDirection">
+                   <enum>Qt::RightToLeft</enum>
+                  </property>
+                  <property name="text">
+                   <string>الاصل</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QRadioButton" name="rbEdit">
+                  <property name="font">
+                   <font>
+                    <pointsize>10</pointsize>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="layoutDirection">
+                   <enum>Qt::RightToLeft</enum>
+                  </property>
+                  <property name="text">
+                   <string>التعديل</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="Line" name="line_5">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_10">
+                  <item>
+                   <spacer name="horizontalSpacer_2">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                     <enum>QSizePolicy::Ignored</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>0</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item>
+                   <widget class="QToolButton" name="btnEdit">
+                    <property name="text">
+                     <string>...</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="horizontalSpacer">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                     <enum>QSizePolicy::Ignored</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>0</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
               </item>
               <item>
                <widget class="QLineEdit" name="lblName">
@@ -1173,6 +1260,9 @@ QTableWidget:item:selected
                           <bold>true</bold>
                          </font>
                         </property>
+                        <property name="focusPolicy">
+                         <enum>Qt::NoFocus</enum>
+                        </property>
                         <property name="styleSheet">
                          <string notr="true">background-color: #D7CCC8;
 border-width: 1px;
@@ -1249,6 +1339,9 @@ font-weight: bold;</string>
                           <weight>75</weight>
                           <bold>true</bold>
                          </font>
+                        </property>
+                        <property name="focusPolicy">
+                         <enum>Qt::NoFocus</enum>
                         </property>
                         <property name="styleSheet">
                          <string notr="true">background-color: #D7CCC8;
@@ -1327,6 +1420,9 @@ font-weight: bold;</string>
                           <bold>true</bold>
                          </font>
                         </property>
+                        <property name="focusPolicy">
+                         <enum>Qt::NoFocus</enum>
+                        </property>
                         <property name="styleSheet">
                          <string notr="true">background-color: #D7CCC8;
 border-width: 1px;
@@ -1404,6 +1500,9 @@ font-weight: bold;</string>
                      <weight>75</weight>
                      <bold>true</bold>
                     </font>
+                   </property>
+                   <property name="focusPolicy">
+                    <enum>Qt::NoFocus</enum>
                    </property>
                    <property name="styleSheet">
                     <string notr="true">background-color: #D7CCC8;
@@ -1779,6 +1878,9 @@ font-weight: bold;</string>
                      <bold>true</bold>
                     </font>
                    </property>
+                   <property name="focusPolicy">
+                    <enum>Qt::NoFocus</enum>
+                   </property>
                    <property name="styleSheet">
                     <string notr="true">background-color: #D7CCC8;
 border-width: 1px;
@@ -1858,6 +1960,9 @@ font-weight: bold;</string>
                      <weight>75</weight>
                      <bold>true</bold>
                     </font>
+                   </property>
+                   <property name="focusPolicy">
+                    <enum>Qt::NoFocus</enum>
                    </property>
                    <property name="styleSheet">
                     <string notr="true">background-color: #D7CCC8;

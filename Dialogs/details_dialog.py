@@ -2,7 +2,7 @@ from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QMessageBox
 from Layouts.details_ui import Ui_details
-from Threads.threads import PrintCustomer, Save
+from Threads.threads import PrintCustomer, Save, RefuseEdit
 import pandas as pd
 from .loading_dialog import Loading
 
@@ -38,11 +38,16 @@ class DetailsDialog(QDialog, Ui_details):
         self.btnPrint.clicked.connect(self.print_customer)
         self.btnPrev.clicked.connect(self.prev_customer)
 
+        self.rbOriginal.clicked.connect(self.display_old_customer)
+        self.rbEdit.clicked.connect(self.display_new_customer)
+
         # self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.loading = Loading()
 
         self.mode = 'v'
         self.customer = None
+        self.old_customer = None
+        self.new_customer = None
         self.sheet_row_index = None
         self.len_data = None
         self.categories = None
@@ -52,8 +57,8 @@ class DetailsDialog(QDialog, Ui_details):
         self.customer_ = None
         self.old_edit = None
         self.auth = None
-
-        self.auth_type = 'admin'
+        self.approve = False
+        self.auth_type = 'editor'
 
         self.cate_yarn = []
         self.cate_omega = []
@@ -119,8 +124,6 @@ class DetailsDialog(QDialog, Ui_details):
                         len_rows=len(self.customer['omega_cate_name'].values[-1]), cate_name='omega')
         self.fill_table(data=self.customer['factory_cate_name'].values[-1], obj=self.twCloth,
                         len_rows=len(self.customer['factory_cate_name'].values[-1]), cate_name='cloth')
-
-        print(self.auth)
 
     def print_customer(self):
         thread = PrintCustomer(self)
@@ -215,13 +218,32 @@ class DetailsDialog(QDialog, Ui_details):
         self.txtSize.setVisible(not e_mode)
         self.txtBranch.setVisible(not e_mode)
 
+        if self.approve:
+            self.rbEdit.setVisible(True)
+            self.rbOriginal.setVisible(True)
+            self.line_5.setVisible(True)
+            self.btnSave.setVisible(True)
+            self.btnCancle.setVisible(True)
+            self.btnPrint.setVisible(False)
+            self.btnPrev.setVisible(False)
+        else:
+            self.rbEdit.setVisible(False)
+            self.rbOriginal.setVisible(False)
+            self.line_5.setVisible(False)
+
         self.fill_combos()
 
-        if self.mode == 'v':
+        if self.approve and self.auth_type == 'editor':
+            self.btnSave.setVisible(False)
+
+        if self.mode == 'v' and not self.approve:
             self.btnCancle.clicked.connect(self.cancel_editing)
-        else:
+        elif self.mode == 'e':
             self.btnEdit.setVisible(False)
             self.btnCancle.clicked.connect(lambda: self.close())
+        else:
+            self.btnEdit.setVisible(False)
+            self.btnCancle.clicked.connect(self.refuse_edit)
 
     def cancel_editing(self):
         self.setup_edit_view_mode(e_mode=False)
@@ -229,6 +251,9 @@ class DetailsDialog(QDialog, Ui_details):
 
     def thread_error(self, error):
         QMessageBox.warning(self, 'ERROR!', error)
+        if self.approve:
+            self.loading.stop_dialog()
+            self.btnCancle.setEnabled(True)
 
     def thread_save_error(self, error):
         if self.mode == 'v':
@@ -349,6 +374,9 @@ class DetailsDialog(QDialog, Ui_details):
             tw_obj.removeRow(index)
 
     def save_(self):
+        if self.approve:
+            self.display_new_customer()
+
         self.customer_ = {
             'i': self.customer['i'].values[-1] if self.mode == 'v' else self.sheet_row_index + 1,
             'name': self.lblName.text(),
@@ -374,39 +402,11 @@ class DetailsDialog(QDialog, Ui_details):
             'factory_cate': ''.join(self.cates['cloth'])[:-1] if len(self.cates['cloth']) > 0 else '',
             'by': self.auth
         }
-        old_customer = []
-        if self.mode == 'v':
-            old_customer = {
-                'i': self.customer['i'].values[-1],
-                'name': self.customer['name'].values[-1],
-                'sales_yarn': self.customer['sales_yarn'].values[-1],
-                'sales_omega': self.customer['sales_omega'].values[-1],
-                'sales_cloth': self.customer['sales_cloth'].values[-1],
-                'contact_p': self.customer['contact_p'].values[-1],
-                'branch': self.customer['branch'].values[-1],
-                'area': self.customer['area'].values[-1],
-                'address': self.customer['address'].values[-1],
-                'e_mail': self.customer['e_mail'].values[-1],
-                'phone1': self.customer['phone1'].values[-1],
-                'phone2': self.customer['phone2'].values[-1],
-                'phone3': self.customer['phone3'].values[-1],
-                'phone4': self.customer['phone4'].values[-1],
-                'cust_type': self.customer['cust_type'].values[-1],
-                'size': self.customer['size'].values[-1],
-                'yarn': self.customer['yarn'].values[-1],
-                'omega': self.customer['omega'].values[-1],
-                'factory': self.customer['factory'].values[-1],
-                'yarn_cate': self.customer['yarn_cate'].values[-1],
-                'omega_cate': self.customer['omega_cate'].values[-1],
-                'factory_cate': self.customer['factory_cate'].values[-1],
-                'by': self.auth
-            }
 
         edited = True
         if self.mode == 'v':
             edited = False
             for key in self.customer_.keys():
-                print('here', key)
                 if self.customer_[key] != self.customer[key].values[-1]:
                     edited = True
                     try:
@@ -416,7 +416,7 @@ class DetailsDialog(QDialog, Ui_details):
                         pass
                     break
 
-        if edited:
+        if edited or self.approve:
             if self.customer_['name'] != 'Name' and \
                     self.customer_['name'] != '' and \
                     (self.customer_['sales_yarn'] != '' or self.customer_['sales_omega'] != '' or
@@ -433,11 +433,15 @@ class DetailsDialog(QDialog, Ui_details):
                     thread.mode = self.mode
                     thread.len_data = self.len_data
                     thread.sheet_row_index = self.sheet_row_index
-                    thread.old_customer = old_customer
-                    thread.auth_type = 'editor'
+                    thread.auth_type = self.auth_type
+                    thread.approve = self.approve
                     thread.done.connect(self.has_been_saved)
                     thread.error.connect(self.thread_save_error)
                     thread.start()
+
+                    if self.approve:
+                        self.mode = 'v'
+                        self.approve = False
 
                     self.create_obj()
                     self.cancel_editing()
@@ -472,3 +476,25 @@ class DetailsDialog(QDialog, Ui_details):
             lambda x: self.categories['cloth'].loc[
                 list(map(int, x.split(','))) if not isinstance(x, int) and x != '' else [] if x == '' else [
                     x]].values)
+
+    def display_old_customer(self):
+        self.customer = self.old_customer
+        self.set_data()
+
+    def display_new_customer(self):
+        self.customer = self.new_customer
+        self.set_data()
+
+    def refuse_edit(self):
+        thread = RefuseEdit(self)
+        thread.sheet_requests = self.sheet_requests
+        thread.customer = self.new_customer
+        thread.edit_refused.connect(self.edit_refused)
+        thread.error.connect(self.thread_error)
+        thread.start()
+        self.btnCancle.setEnabled(False)
+        self.loading.start_dialog()
+
+    def edit_refused(self):
+        self.loading.stop_dialog()
+        self.close()

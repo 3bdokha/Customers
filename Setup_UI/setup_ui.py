@@ -15,12 +15,13 @@ class MainForm(QMainWindow, Ui_MainWindow):
     categories = None
     sales_p = None
     edit_requests = None
+    auth_type = None
     sheet_customers = None
     sheet_requests = None
     first = True
     data_mode = 'c'
 
-    d_header = ['i', 'name', 'phone1', 'phone2', 'address', 'sales_yarn']
+    d_header = ['i', 'name', 'phone1', 'phone2', 'address', 'sales_yarn', 'by']
 
     def __init__(self):
         QMainWindow.__init__(self)
@@ -28,7 +29,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.setWindowIcon(QtGui.QIcon('Assets\\icon.ico'))
         self.setWindowTitle('Customers - Main Window')
 
-        self.auth = json.load(open('Assets/Tokens/Omega.json'))['client_email'].split('@')[0]
+        self.auth_account = json.load(open('Assets/Tokens/Omega.json'))['client_email'].split('@')[0]
 
         # self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.loading = Loading()
@@ -110,12 +111,16 @@ class MainForm(QMainWindow, Ui_MainWindow):
             self.loading.stop_dialog()
         QMessageBox.warning(self, 'ERROR!', error)
 
-    def get_data(self, customers, categories, sales_p, edit_requests, sheet_customers, sheet_requests, internet):
+    def get_data(self, customers, categories, sales_p, edit_requests, auth, sheet_customers, sheet_requests, internet):
         try:
-            self._data = customers if self.data_mode == 'c' else edit_requests[edit_requests['type'] == 'old']
+            self.auth_type = auth['permission'][auth['account'] == self.auth_account].values[-1]
         except:
-            self._data = customers if self.data_mode == 'c' else edit_requests
+            self.auth_type = 'editor'
 
+        if self.auth_type == 'editor':
+            edit_requests = edit_requests[edit_requests['by'] == self.auth_account]
+
+        self._data = customers if self.data_mode == 'c' else edit_requests
         self.categories = categories
         self.sales_p = sales_p
         self.edit_requests = edit_requests
@@ -124,7 +129,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.sheet_requests = sheet_requests
         self.lblInternet.setText(internet)
         try:
-            self.lcdNumber.setValue(len(edit_requests[edit_requests['type'] == 'old']))
+            self.lcdNumber.setValue(len(edit_requests))
         except:
             self.lcdNumber.setValue(0)
 
@@ -153,7 +158,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
             self.twResalt.setColumnCount(len_columns)
 
             self.twResalt.setHorizontalHeaderLabels(
-                ['Index', 'الاسم', 'رقم الموبيل', 'رقم الموبيل', 'المكان', 'مسؤول المبيعات'])
+                ['Index', 'الاسم', 'رقم الموبيل', 'رقم الموبيل', 'المكان', 'مسؤول المبيعات', 'Editor'])
             if data is not None:
                 for row in range(len(data)):
                     for column in range(len_columns):
@@ -172,16 +177,27 @@ class MainForm(QMainWindow, Ui_MainWindow):
         index = self.twResalt.currentRow()
         code = int(self.twResalt.item(index, 0).text())
         self.details = DetailsDialog()
-        self.details.customer = self._data[self._data['i'] == int(code)]
-        self.details.sheet_row_index = self._data[self._data['i'] == int(code)].index[-1] + 2
         self.details.categories = self.categories
         self.details.sheet_customers = self.sheet_customers
         self.details.sheet_requests = self.sheet_requests
         self.details.sales_p = self.sales_p
-        self.details.len_data = len(self._data)
+        self.details.auth = self.auth_account
+        self.details.auth_type = self.auth_type
         self.details.mode = 'v'
-        self.details.auth = self.auth
-        self.details.setup_edit_view_mode(e_mode=False)
+
+        if self.data_mode == 'c':
+            self.details.customer = self._data[self._data['i'] == int(code)]
+            self.details.sheet_row_index = self._data[self._data['i'] == int(code)].index[-1] + 2
+            self.details.len_data = len(self._data)
+            self.details.setup_edit_view_mode(e_mode=False)
+        else:
+            self.details.approve = True
+            self.details.customer = self.customers[self.customers['i'] == int(code)]
+            self.details.old_customer = self.details.customer
+            self.details.new_customer = self._data[self._data['i'] == int(code)]
+            self.details.sheet_row_index = self._data['row_index'].loc[self._data['i'] == int(code)].values[-1]
+            self.details.setup_edit_view_mode(e_mode=True if self.auth_type == 'admin' else False)
+
         self.details.set_data()
         self.details.show()
 
@@ -193,7 +209,8 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.details.sales_p = self.sales_p
         self.details.len_data = len(self._data)
         self.details.mode = 'n'
-        self.details.auth = self.auth
+        self.details.auth = self.auth_account
+        self.details.auth_type = self.auth_type
         self.details.sheet_row_index = self._data['i'].values[-1]
         self.details.setup_edit_view_mode(e_mode=True)
         self.details.show()
@@ -371,14 +388,13 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.btnSearchData.setVisible(False)
         self._data = self.customers
         self.fill_controls()
+        self.reset()
         self.data_mode = 'c'
 
     def requests_data(self):
         self.btnRefresh.setVisible(False)
         self.btnSearchData.setVisible(True)
-        try:
-            self._data = self.edit_requests[self.edit_requests['type'] == 'old']
-        except:
-            self._data = self.edit_requests
+        self._data = self.edit_requests
         self.fill_controls()
+        self.reset()
         self.data_mode = 'e'

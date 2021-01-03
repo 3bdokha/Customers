@@ -844,9 +844,45 @@ class Ui_details(object):
         self.groupBox_13.setObjectName("groupBox_13")
         self.horizontalLayout_11 = QtWidgets.QHBoxLayout(self.groupBox_13)
         self.horizontalLayout_11.setObjectName("horizontalLayout_11")
+        self.verticalLayout_15 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_15.setSpacing(3)
+        self.verticalLayout_15.setObjectName("verticalLayout_15")
+        self.rbOriginal = QtWidgets.QRadioButton(self.groupBox_13)
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        font.setBold(True)
+        font.setWeight(75)
+        self.rbOriginal.setFont(font)
+        self.rbOriginal.setLayoutDirection(QtCore.Qt.RightToLeft)
+        self.rbOriginal.setChecked(True)
+        self.rbOriginal.setObjectName("rbOriginal")
+        self.verticalLayout_15.addWidget(self.rbOriginal)
+        self.rbEdit = QtWidgets.QRadioButton(self.groupBox_13)
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        font.setBold(True)
+        font.setWeight(75)
+        self.rbEdit.setFont(font)
+        self.rbEdit.setLayoutDirection(QtCore.Qt.RightToLeft)
+        self.rbEdit.setObjectName("rbEdit")
+        self.verticalLayout_15.addWidget(self.rbEdit)
+        self.line_5 = QtWidgets.QFrame(self.groupBox_13)
+        self.line_5.setFrameShape(QtWidgets.QFrame.HLine)
+        self.line_5.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_5.setObjectName("line_5")
+        self.verticalLayout_15.addWidget(self.line_5)
+        self.horizontalLayout_10 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_10.setObjectName("horizontalLayout_10")
+        spacerItem = QtWidgets.QSpacerItem(0, 20, QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_10.addItem(spacerItem)
         self.btnEdit = QtWidgets.QToolButton(self.groupBox_13)
         self.btnEdit.setObjectName("btnEdit")
-        self.horizontalLayout_11.addWidget(self.btnEdit)
+        self.horizontalLayout_10.addWidget(self.btnEdit)
+        spacerItem1 = QtWidgets.QSpacerItem(0, 20, QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_10.addItem(spacerItem1)
+        self.verticalLayout_15.addLayout(self.horizontalLayout_10)
+        self.verticalLayout_15.setStretch(3, 1)
+        self.horizontalLayout_11.addLayout(self.verticalLayout_15)
         self.lblName = QtWidgets.QLineEdit(self.groupBox_13)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -864,6 +900,7 @@ class Ui_details(object):
         self.lblName.setReadOnly(True)
         self.lblName.setObjectName("lblName")
         self.horizontalLayout_11.addWidget(self.lblName)
+        self.horizontalLayout_11.setStretch(1, 1)
         self.verticalLayout_6.addWidget(self.groupBox_13)
         self.groupBox_54 = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
         self.groupBox_54.setTitle("")
@@ -922,6 +959,7 @@ class Ui_details(object):
         font.setBold(True)
         font.setWeight(75)
         self.comSalesCloth.setFont(font)
+        self.comSalesCloth.setFocusPolicy(QtCore.Qt.NoFocus)
         self.comSalesCloth.setStyleSheet("background-color: #D7CCC8;\n"
 "border-width: 1px;\n"
 "border-color: #1e1e1e;\n"
@@ -968,6 +1006,7 @@ class Ui_details(object):
         font.setBold(True)
         font.setWeight(75)
         self.comSalesOmega.setFont(font)
+        self.comSalesOmega.setFocusPolicy(QtCore.Qt.NoFocus)
         self.comSalesOmega.setStyleSheet("background-color: #D7CCC8;\n"
 "border-width: 1px;\n"
 "border-color: #1e1e1e;\n"
@@ -1014,6 +1053,7 @@ class Ui_details(object):
         font.setBold(True)
         font.setWeight(75)
         self.comSalesYarn.setFont(font)
+        self.comSalesYarn.setFocusPolicy(QtCore.Qt.NoFocus)
         self.comSalesYarn.setStyleSheet("background-color: #D7CCC8;\n"
 "border-width: 1px;\n"
 "border-color: #1e1e1e;\n"
@@ -1058,6 +1098,7 @@ class Ui_details(object):
         font.setBold(True)
         font.setWeight(75)
         self.comBranch.setFont(font)
+        self.comBranch.setFocusPolicy(QtCore.Qt.NoFocus)
         self.comBranch.setStyleSheet("background-color: #D7CCC8;\n"
 "border-width: 1px;\n"
 "border-color: #1e1e1e;\n"
@@ -1263,6 +1304,7 @@ class Ui_details(object):
         font.setBold(True)
         font.setWeight(75)
         self.comCustType.setFont(font)
+        self.comCustType.setFocusPolicy(QtCore.Qt.NoFocus)
         self.comCustType.setStyleSheet("background-color: #D7CCC8;\n"
 "border-width: 1px;\n"
 "border-color: #1e1e1e;\n"
@@ -1311,6 +1353,7 @@ class Ui_details(object):
         font.setBold(True)
         font.setWeight(75)
         self.comSize.setFont(font)
+        self.comSize.setFocusPolicy(QtCore.Qt.NoFocus)
         self.comSize.setStyleSheet("background-color: #D7CCC8;\n"
 "border-width: 1px;\n"
 "border-color: #1e1e1e;\n"
@@ -1459,6 +1502,8 @@ class Ui_details(object):
         self.label_41.setText(_translate("details", "اصناف القماش"))
         self.btnCloth.setText(_translate("details", ".."))
         self.groupBox_13.setTitle(_translate("details", "*"))
+        self.rbOriginal.setText(_translate("details", "الاصل"))
+        self.rbEdit.setText(_translate("details", "التعديل"))
         self.btnEdit.setText(_translate("details", "..."))
         self.lblName.setText(_translate("details", "Name"))
         self.groupBox_4.setTitle(_translate("details", "*"))

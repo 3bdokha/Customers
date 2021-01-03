@@ -8,6 +8,7 @@ import pandas as pd
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
 from openpyxl import load_workbook
+import json
 
 temp_path = os.path.join(os.path.expanduser('~'), 'Documents\\Customers')
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -38,6 +39,9 @@ if not os.path.exists(os.path.join(temp_path, 'sales_p.csv')):
 if not os.path.exists(os.path.join(temp_path, 'Customer Form.xlsx')):
     copy2(os.path.join(BASE_DIR, 'Assets\\Customer Form.xlsx'), temp_path)
 
+if not os.path.exists(os.path.join(temp_path, 'auth.csv')):
+    copy2(os.path.join(BASE_DIR, 'Assets\\auth.csv'), temp_path)
+
 
 def read_temp():
     customers = pd.read_csv(os.path.join(temp_path, 'temp.csv'), header=0, dtype={
@@ -61,13 +65,16 @@ def read_temp():
     sales_p = sales_p.set_index('code')
     sales_p = sales_p.replace(np.nan, '')
 
-    return customers, cate, sales_p
+    auth = pd.read_csv(os.path.join(temp_path, 'auth.csv'), header=0)
+    auth = auth.replace(np.nan, '')
+
+    return customers, cate, sales_p, auth
 
 
 class GetAuth(QThread):
     auth = pyqtSignal(object)
     error = pyqtSignal(object)
-    off_data = pyqtSignal(object, object, object, object, object, object, str)
+    off_data = pyqtSignal(object, object, object, object, object, object, object, str)
 
     def run(self):
         no_internet = True
@@ -94,9 +101,9 @@ class GetAuth(QThread):
                     self.error.emit(str(e))
                     first = 0
 
-                cust, cate, sales_p = read_temp()
+                cust, cate, sales_p, auth = read_temp()
                 edit_requests = pd.DataFrame([], columns=cust.columns)
-                self.off_data.emit(cust, cate, sales_p, edit_requests, None, None, INTERNET)
+                self.off_data.emit(cust, cate, sales_p, edit_requests, auth, None, None, INTERNET)
 
                 time.sleep(5)
             print(INTERNET, datetime.time(datetime.now()))
@@ -104,7 +111,7 @@ class GetAuth(QThread):
 
 class GetData(QThread):
     sheet = None
-    data = pyqtSignal(object, object, object, object, object, object, str)
+    data = pyqtSignal(object, object, object, object, object, object, object, str)
     error = pyqtSignal(object, object)
 
     def run(self):
@@ -113,6 +120,7 @@ class GetData(QThread):
         sheet_category = self.sheet.get_worksheet(1)
         sheet_sales_p = self.sheet.get_worksheet(2)
         sheet_requests = self.sheet.get_worksheet(3)
+        sheet_auth = self.sheet.get_worksheet(4)
 
         while True:
             try:
@@ -136,19 +144,23 @@ class GetData(QThread):
                 customers = self.convert_num_to_words(customers, categories)
                 edit_requests = self.convert_num_to_words(edit_requests, categories)
 
+                auth = pd.DataFrame.from_dict(sheet_auth.get_all_records())
+
                 INTERNET = online
-                self.data.emit(customers, categories, sales_p, edit_requests, sheet_customers, sheet_requests, INTERNET)
+                self.data.emit(customers, categories, sales_p, edit_requests, auth, sheet_customers, sheet_requests,
+                               INTERNET)
 
                 customers.to_csv(os.path.join(temp_path, 'temp.csv'), index=False, encoding='utf-8-sig')
                 categories.to_csv(os.path.join(temp_path, 'cate.csv'), encoding='utf-8-sig')
                 sales_p.to_csv(os.path.join(temp_path, 'sales_p.csv'), encoding='utf-8-sig')
+                auth.to_csv(os.path.join(temp_path, 'auth.csv'), index=False, encoding='utf-8-sig')
 
             except Exception as e:
                 print(e)
                 INTERNET = offline
-                cust, cate, sales_p = read_temp()
+                cust, cate, sales_p, auth = read_temp()
                 edit_requests = pd.DataFrame([], columns=cust.columns)
-                self.data.emit(cust, cate, sales_p, edit_requests, None, None, INTERNET)
+                self.data.emit(cust, cate, sales_p, edit_requests, auth, None, None, INTERNET)
 
             print(INTERNET, datetime.time(datetime.now()))
             time.sleep(10)
@@ -226,6 +238,7 @@ class Save(QThread):
     sheet_row_index = None
     mode = None
     len_data = None
+    approve = False
 
     done = pyqtSignal(str, str)
     error = pyqtSignal(str)
@@ -309,42 +322,79 @@ class Save(QThread):
                     self.error.emit('هذا العميل موجود من قبل')
             else:
                 if self.auth_type == 'admin':
-                    for col in range(len(row)):
-                        self.sheet.update_cell(self.sheet_row_index, col + 1, str(row[col]))
+                    cell_list = self.sheet.range(f'A{self.sheet_row_index}:W{self.sheet_row_index}')
+                    x = 0
+                    for cell in cell_list:
+                        cell.value = str(row[x])
+                        x += 1
+
+                    # Update in batch
+                    self.sheet.update_cells(cell_list)
+
+                    if self.approve:
+                        edit_requests = self.get_requests()
+                        index = edit_requests[edit_requests['i'] == self.customer['i']].index[-1]
+                        self.sheet_requests.delete_dimension(dimension='ROWS', start_index=index + 2)
+
                     self.done.emit('نجح', 'تم التعديل بنجاح')
                 else:
-                    edit_requests = pd.DataFrame.from_dict(self.sheet_requests.get_all_records())
-                    edit_requests = edit_requests.drop(index=0)
-                    edit_requests = edit_requests.replace(np.nan, '')
+                    edit_requests = self.get_requests()
 
                     if not self.customer['i'] in edit_requests['i'].values:
-                        self.sheet_requests.insert_row(list(map(str, ['new'] + row)), 3)
-                        self.sheet_requests.insert_row(list(map(str, ['old'] + [self.old_customer['i'],
-                                                                                self.old_customer['sales_yarn'],
-                                                                                self.old_customer['sales_omega'],
-                                                                                self.old_customer['sales_cloth'],
-                                                                                self.old_customer['name'],
-                                                                                self.old_customer['contact_p'],
-                                                                                self.old_customer['branch'],
-                                                                                self.old_customer['area'],
-                                                                                self.old_customer['address'],
-                                                                                self.old_customer['phone1'],
-                                                                                self.old_customer['phone2'],
-                                                                                self.old_customer['phone3'],
-                                                                                self.old_customer['phone4'],
-                                                                                self.old_customer['e_mail'],
-                                                                                self.old_customer['omega_cate'],
-                                                                                self.old_customer['yarn_cate'],
-                                                                                self.old_customer['factory_cate'],
-                                                                                self.old_customer['size'],
-                                                                                self.old_customer['factory'],
-                                                                                self.old_customer['yarn'],
-                                                                                self.old_customer['omega'],
-                                                                                self.old_customer['cust_type'],
-                                                                                self.old_customer['by']])), 3)
+                        self.sheet_requests.insert_row(list(map(str, [self.sheet_row_index] + row)), 3)
+                        # self.sheet_requests.insert_row(
+                        #     list(map(str, ['old', self.sheet_row_index] + [self.old_customer['i'],
+                        #                                                    self.old_customer['sales_yarn'],
+                        #                                                    self.old_customer['sales_omega'],
+                        #                                                    self.old_customer['sales_cloth'],
+                        #                                                    self.old_customer['name'],
+                        #                                                    self.old_customer['contact_p'],
+                        #                                                    self.old_customer['branch'],
+                        #                                                    self.old_customer['area'],
+                        #                                                    self.old_customer['address'],
+                        #                                                    self.old_customer['phone1'],
+                        #                                                    self.old_customer['phone2'],
+                        #                                                    self.old_customer['phone3'],
+                        #                                                    self.old_customer['phone4'],
+                        #                                                    self.old_customer['e_mail'],
+                        #                                                    self.old_customer['omega_cate'],
+                        #                                                    self.old_customer['yarn_cate'],
+                        #                                                    self.old_customer['factory_cate'],
+                        #                                                    self.old_customer['size'],
+                        #                                                    self.old_customer['factory'],
+                        #                                                    self.old_customer['yarn'],
+                        #                                                    self.old_customer['omega'],
+                        #                                                    self.old_customer['cust_type'],
+                        #                                                    self.old_customer['by']])), 3)
                         self.done.emit('', 'تم تقديم طلب للتعديل ...')
                     else:
                         self.error.emit('تم طلب تعديل من قبل لنفس العميل ...')
 
         except Exception as e:
             self.error.emit(str(e))
+
+    def get_requests(self):
+        edit_requests = pd.DataFrame.from_dict(self.sheet_requests.get_all_records())
+        edit_requests = edit_requests.drop(index=0)
+        edit_requests = edit_requests.replace(np.nan, '')
+        return edit_requests
+
+
+class RefuseEdit(QThread):
+    sheet_requests = None
+    customer = None
+    error = pyqtSignal(str)
+
+    edit_refused = pyqtSignal()
+
+    def run(self):
+        try:
+            edit_requests = pd.DataFrame.from_dict(self.sheet_requests.get_all_records())
+            edit_requests = edit_requests.drop(index=0)
+            edit_requests = edit_requests.replace(np.nan, '')
+
+            index = edit_requests[edit_requests['i'] == self.customer['i']].index[-1]
+            self.sheet_requests.delete_dimension(dimension='ROWS', start_index=index + 2)
+            self.edit_refused.emit()
+        except:
+            self.error.emit('حدث خطئ ما برجاء المحاولة بعد قليل')
