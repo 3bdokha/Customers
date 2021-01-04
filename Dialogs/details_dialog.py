@@ -1,5 +1,6 @@
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIntValidator
 from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QMessageBox
 from Layouts.details_ui import Ui_details
 from Threads.threads import PrintCustomer, Save, RefuseEdit
@@ -14,6 +15,7 @@ class DetailsDialog(QDialog, Ui_details):
         self.setWindowIcon(QtGui.QIcon('Assets\\icon.ico'))
         self.btnEdit.clicked.connect(lambda: self.setup_edit_view_mode(e_mode=True))
 
+        # enable controls when select the company checkbox
         self.comSalesYarn.setEnabled(self.cbYarn.isChecked())
         self.comSalesOmega.setEnabled(self.cbOmega.isChecked())
         self.comSalesCloth.setEnabled(self.cbCloth.isChecked())
@@ -22,17 +24,21 @@ class DetailsDialog(QDialog, Ui_details):
         self.comOmega.setEnabled(self.cbOmega.isChecked())
         self.comCloth.setEnabled(self.cbCloth.isChecked())
 
+        # when change status of company checkbox
         self.cbYarn.stateChanged.connect(lambda: self.state_changed('yarn'))
         self.cbOmega.stateChanged.connect(lambda: self.state_changed('omega'))
         self.cbCloth.stateChanged.connect(lambda: self.state_changed('cloth'))
 
+        # to add category to Table widget
         self.btnYarn.clicked.connect(lambda: self.add_cate(self.comYarn, 'yarn', self.twYarn))
         self.btnOmega.clicked.connect(lambda: self.add_cate(self.comOmega, 'omega', self.twOmega))
         self.btnCloth.clicked.connect(lambda: self.add_cate(self.comCloth, 'cloth', self.twCloth))
 
+        # to remove category from Table widget
         self.twYarn.itemDoubleClicked.connect(lambda: self.del_cate(self.twYarn, 'yarn'))
         self.twOmega.itemDoubleClicked.connect(lambda: self.del_cate(self.twOmega, 'omega'))
         self.twCloth.itemDoubleClicked.connect(lambda: self.del_cate(self.twCloth, 'cloth'))
+
         self.btnSave.clicked.connect(self.save_)
 
         self.btnPrint.clicked.connect(self.print_customer)
@@ -41,9 +47,16 @@ class DetailsDialog(QDialog, Ui_details):
         self.rbOriginal.clicked.connect(self.display_old_customer)
         self.rbEdit.clicked.connect(self.display_new_customer)
 
-        # self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+        # make input of txtPhones accept numbers only
+        self.txtPhone1.setValidator(QIntValidator())
+        self.txtPhone2.setValidator(QIntValidator())
+        self.txtPhone3.setValidator(QIntValidator())
+        self.txtPhone4.setValidator(QIntValidator())
+
+        # create loading dialog object
         self.loading = Loading()
 
+        # some flags and variables
         self.mode = 'v'
         self.customer = None
         self.old_customer = None
@@ -78,6 +91,7 @@ class DetailsDialog(QDialog, Ui_details):
                      'cloth': self.row_cloth
                      }
 
+    # set data passed from main ui to details dialog
     def set_data(self):
         self.setWindowTitle(f"Details - {self.customer['name'].values[-1]}")
 
@@ -118,12 +132,114 @@ class DetailsDialog(QDialog, Ui_details):
         self.cbOmega.setChecked(True if self.customer['omega'].values[-1] == 1 else False)
         self.cbCloth.setChecked(True if self.customer['factory'].values[-1] == 1 else False)
 
+        # file categories table widgets
         self.fill_table(data=self.customer['yarn_cate_name'].values[-1], obj=self.twYarn,
                         len_rows=len(self.customer['yarn_cate_name'].values[-1]), cate_name='yarn')
         self.fill_table(data=self.customer['omega_cate_name'].values[-1], obj=self.twOmega,
                         len_rows=len(self.customer['omega_cate_name'].values[-1]), cate_name='omega')
         self.fill_table(data=self.customer['factory_cate_name'].values[-1], obj=self.twCloth,
                         len_rows=len(self.customer['factory_cate_name'].values[-1]), cate_name='cloth')
+
+        # set color to edited fields
+        if self.approve:
+            style = ("QLineEdit\n"
+                     "{\n"
+                     "    border-style: solid;\n"
+                     "    border: 2px solid #e60000;\n"
+                     "}\n"
+                     "QLabel\n"
+                     "{\n"
+                     "    border-style: solid;\n"
+                     "    border: 2px solid #e60000;\n"
+                     "}\n"
+                     "QComboBox\n"
+                     "{\n"
+                     "    border-style: solid;\n"
+                     "    border: 2px solid #e60000;\n"
+                     "    background-color: #D7CCC8;\n"
+                     "}\n"
+                     "QCheckBox\n"
+                     "{\n"
+                     "    border-style: solid;\n"
+                     "    border: 2px solid #e60000;\n"
+                     "}\n"
+                     "QTableWidget\n"
+                     "{\n"
+                     "    border-style: solid;\n"
+                     "    border: 2px solid #e60000;\n"
+                     "}\n")
+
+            if self.old_customer['name'].values[-1] != self.new_customer['name'].values[-1]:
+                self.lblName.setStyleSheet(style)
+
+            if self.old_customer['name'].values[-1] != self.new_customer['name'].values[-1]:
+                self.lblName.setStyleSheet(style)
+
+            if self.old_customer['sales_yarn'].values[-1] != self.new_customer['sales_yarn'].values[-1]:
+                self.txtSlaesYarn.setStyleSheet(style)
+                self.comSalesYarn.setStyleSheet(style)
+
+            if self.old_customer['sales_omega'].values[-1] != self.new_customer['sales_omega'].values[-1]:
+                self.txtSlaesOmega.setStyleSheet(style)
+                self.comSalesOmega.setStyleSheet(style)
+
+            if self.old_customer['sales_cloth'].values[-1] != self.new_customer['sales_cloth'].values[-1]:
+                self.txtSlaesCloth.setStyleSheet(style)
+                self.comSalesCloth.setStyleSheet(style)
+
+            if self.old_customer['branch'].values[-1] != self.new_customer['branch'].values[-1]:
+                self.txtBranch.setStyleSheet(style)
+                self.comBranch.setStyleSheet(style)
+
+            if self.old_customer['area'].values[-1] != self.new_customer['area'].values[-1]:
+                self.txtArea.setStyleSheet(style)
+
+            if self.old_customer['contact_p'].values[-1] != self.new_customer['contact_p'].values[-1]:
+                self.txtContactPerson.setStyleSheet(style)
+
+            if self.old_customer['address'].values[-1] != self.new_customer['address'].values[-1]:
+                self.txtAdrress.setStyleSheet(style)
+
+            if self.old_customer['e_mail'].values[-1] != self.new_customer['e_mail'].values[-1]:
+                self.txtMail.setStyleSheet(style)
+
+            if self.old_customer['phone1'].values[-1] != self.new_customer['phone1'].values[-1]:
+                self.txtPhone1.setStyleSheet(style)
+
+            if self.old_customer['phone2'].values[-1] != self.new_customer['phone2'].values[-1]:
+                self.txtPhone2.setStyleSheet(style)
+
+            if self.old_customer['phone3'].values[-1] != self.new_customer['phone3'].values[-1]:
+                self.txtPhone3.setStyleSheet(style)
+
+            if self.old_customer['phone4'].values[-1] != self.new_customer['phone4'].values[-1]:
+                self.txtPhone4.setStyleSheet(style)
+
+            if self.old_customer['cust_type'].values[-1] != self.new_customer['cust_type'].values[-1]:
+                self.txtCustType.setStyleSheet(style)
+                self.comCustType.setStyleSheet(style)
+
+            if self.old_customer['size'].values[-1] != self.new_customer['size'].values[-1]:
+                self.txtSize.setStyleSheet(style)
+                self.comSize.setStyleSheet(style)
+
+            if self.old_customer['yarn'].values[-1] != self.new_customer['yarn'].values[-1]:
+                self.cbYarn.setStyleSheet(style)
+
+            if self.old_customer['omega'].values[-1] != self.new_customer['omega'].values[-1]:
+                self.cbOmega.setStyleSheet(style)
+
+            if self.old_customer['factory'].values[-1] != self.new_customer['factory'].values[-1]:
+                self.cbCloth.setStyleSheet(style)
+
+            if self.old_customer['yarn_cate'].values[-1] != self.new_customer['yarn_cate'].values[-1]:
+                self.twYarn.setStyleSheet(style)
+
+            if self.old_customer['omega_cate'].values[-1] != self.new_customer['omega_cate'].values[-1]:
+                self.twOmega.setStyleSheet(style)
+
+            if self.old_customer['factory_cate'].values[-1] != self.new_customer['factory_cate'].values[-1]:
+                self.twCloth.setStyleSheet(style)
 
     def print_customer(self):
         thread = PrintCustomer(self)
@@ -132,6 +248,7 @@ class DetailsDialog(QDialog, Ui_details):
         thread.error.connect(self.thread_error)
         thread.start()
 
+    # display details in excel
     def prev_customer(self):
         thread = PrintCustomer(self)
         thread.customer = self.customer
@@ -139,39 +256,47 @@ class DetailsDialog(QDialog, Ui_details):
         thread.start()
 
     def state_changed(self, company):
-        sales = {
+        # dict of sales persons combobox objects
+        sales_persons_com = {
             'yarn': self.comSalesYarn,
             'omega': self.comSalesOmega,
             'cloth': self.comSalesCloth
         }
 
+        # dict of companies checkbox objects
         cb = {
             'yarn': self.cbYarn,
             'omega': self.cbOmega,
             'cloth': self.cbCloth
         }
 
+        # dict of categories table widget objects
         categories = {
             'yarn': self.twYarn,
             'omega': self.twOmega,
             'cloth': self.twCloth
         }
 
+        # dict of categories combobox objects
         category_com = {
             'yarn': self.comYarn,
             'omega': self.comOmega,
             'cloth': self.comCloth
         }
 
-        sales[company].setEnabled(cb[company].isChecked())
+        # set sales persons combobox enable if company checked
+        sales_persons_com[company].setEnabled(cb[company].isChecked())
+
         if cb[company].isChecked():
+            # set category combobox enable if company checked
             category_com[company].setEnabled(True)
         else:
+            # clear categories table widget and categories combobox when company unchecked
             self.cates[company] = []
             self.rows[company] = 0
             category_com[company].setEnabled(False)
             category_com[company].setCurrentText('')
-            sales[company].setCurrentText('')
+            sales_persons_com[company].setCurrentText('')
 
             self.fill_table(data=self.cates[company], obj=categories[company], len_rows=self.rows[company],
                             cate_name=company)

@@ -158,7 +158,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
             self.twResalt.setColumnCount(len_columns)
 
             self.twResalt.setHorizontalHeaderLabels(
-                ['Index', 'الاسم', 'رقم الموبيل', 'رقم الموبيل', 'المكان', 'مسؤول المبيعات', 'Editor'])
+                ['Index', 'الاسم', 'رقم الموبيل', 'رقم الموبيل', 'المكان', 'مسئول المبيعات', 'مسئول التعديل'])
             if data is not None:
                 for row in range(len(data)):
                     for column in range(len_columns):
@@ -192,9 +192,9 @@ class MainForm(QMainWindow, Ui_MainWindow):
             self.details.setup_edit_view_mode(e_mode=False)
         else:
             self.details.approve = True
-            self.details.customer = self.customers[self.customers['i'] == int(code)]
-            self.details.old_customer = self.details.customer
-            self.details.new_customer = self._data[self._data['i'] == int(code)]
+            self.details.customer = self._data[self._data['i'] == int(code)]
+            self.details.old_customer = self.customers[self.customers['i'] == int(code)]
+            self.details.new_customer = self.details.customer
             self.details.sheet_row_index = self._data['row_index'].loc[self._data['i'] == int(code)].values[-1]
             self.details.setup_edit_view_mode(e_mode=True if self.auth_type == 'admin' else False)
 

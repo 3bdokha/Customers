@@ -152,11 +152,22 @@ class Ui_details(object):
 "\n"
 "QComboBox\n"
 "{\n"
-"    selection-background-color: #000;\n"
+"   /* selection-background-color: #000;\n"
 "    background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #565656, stop: 0.1 #525252, stop: 0.5 #4e4e4e, stop: 0.9 #4a4a4a, stop: 1 #464646);\n"
 "    border-style: solid;\n"
 "    border: 1px solid #1e1e1e;\n"
-"    border-radius: 5;\n"
+"    border-radius: 5; */\n"
+" border-style: solid;\n"
+"   border: 1px solid #1e1e1e;\n"
+"background-color: #D7CCC8;\n"
+"border-width: 1px;\n"
+"border-color: #1e1e1e;\n"
+"border-radius: 6;\n"
+"padding: 3px;\n"
+"padding-left: 5px;\n"
+"padding-right: 5px;\n"
+"font-size: 17px;\n"
+"font-weight: bold;\n"
 "}\n"
 "\n"
 "QComboBox:hover,QPushButton:hover\n"
@@ -536,7 +547,27 @@ class Ui_details(object):
 "QCheckBox::indicator:disabled, QRadioButton::indicator:disabled\n"
 "{\n"
 "    border: 1px solid #444;\n"
-"}")
+"}\n"
+"\n"
+"QTableWidget{\n"
+" background-color:rgba(66,66,66,20%);\n"
+"border-radius: 6;\n"
+"padding: 3px;\n"
+"padding-left: 5px;\n"
+"padding-right: 5px;\n"
+"color: #000;\n"
+"}\n"
+"QTableWidget:item:hover{\n"
+"    background-color: white;\n"
+"    color: #000;\n"
+"}\n"
+"\n"
+"QTableWidget:item:selected\n"
+"{\n"
+"    background-color: white;\n"
+"    color: #000;\n"
+"}\n"
+"")
         self.gridLayout = QtWidgets.QGridLayout(details)
         self.gridLayout.setObjectName("gridLayout")
         self.scrollArea = QtWidgets.QScrollArea(details)
@@ -854,7 +885,7 @@ class Ui_details(object):
         font.setWeight(75)
         self.rbOriginal.setFont(font)
         self.rbOriginal.setLayoutDirection(QtCore.Qt.RightToLeft)
-        self.rbOriginal.setChecked(True)
+        self.rbOriginal.setChecked(False)
         self.rbOriginal.setObjectName("rbOriginal")
         self.verticalLayout_15.addWidget(self.rbOriginal)
         self.rbEdit = QtWidgets.QRadioButton(self.groupBox_13)
@@ -864,6 +895,7 @@ class Ui_details(object):
         font.setWeight(75)
         self.rbEdit.setFont(font)
         self.rbEdit.setLayoutDirection(QtCore.Qt.RightToLeft)
+        self.rbEdit.setChecked(True)
         self.rbEdit.setObjectName("rbEdit")
         self.verticalLayout_15.addWidget(self.rbEdit)
         self.line_5 = QtWidgets.QFrame(self.groupBox_13)
@@ -1001,6 +1033,11 @@ class Ui_details(object):
         self.txtSlaesOmega.setObjectName("txtSlaesOmega")
         self.verticalLayout_13.addWidget(self.txtSlaesOmega)
         self.comSalesOmega = QtWidgets.QComboBox(self.groupBox_17)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.comSalesOmega.sizePolicy().hasHeightForWidth())
+        self.comSalesOmega.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setPointSize(-1)
         font.setBold(True)

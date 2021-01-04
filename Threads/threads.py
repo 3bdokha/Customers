@@ -163,7 +163,7 @@ class GetData(QThread):
                 self.data.emit(cust, cate, sales_p, edit_requests, auth, None, None, INTERNET)
 
             print(INTERNET, datetime.time(datetime.now()))
-            time.sleep(10)
+            time.sleep(5)
 
     @staticmethod
     def convert_num_to_words(customers, categories):
@@ -214,9 +214,9 @@ class PrintCustomer(QThread):
             ws['E7'] = self.customer['e_mail'].values[-1]
             ws['E8'] = self.customer['cust_type'].values[-1]
             ws['E9'] = self.customer['size'].values[-1]
-            ws['E10'] = str(self.customer['yarn_cate'].values[-1])
-            ws['E11'] = str(self.customer['omega_cate'].values[-1])
-            ws['E12'] = str(self.customer['factory_cate'].values[-1])
+            ws['E10'] = str(self.customer['yarn_cate_name'].values[-1])
+            ws['E11'] = str(self.customer['omega_cate_name'].values[-1])
+            ws['E12'] = str(self.customer['factory_cate_name'].values[-1])
 
             # Save the file
             wb.save(form_path)
@@ -392,8 +392,7 @@ class RefuseEdit(QThread):
             edit_requests = pd.DataFrame.from_dict(self.sheet_requests.get_all_records())
             edit_requests = edit_requests.drop(index=0)
             edit_requests = edit_requests.replace(np.nan, '')
-
-            index = edit_requests[edit_requests['i'] == self.customer['i']].index[-1]
+            index = edit_requests[edit_requests['i'] == self.customer['i'].values[-1]].index[-1]
             self.sheet_requests.delete_dimension(dimension='ROWS', start_index=index + 2)
             self.edit_refused.emit()
         except:
