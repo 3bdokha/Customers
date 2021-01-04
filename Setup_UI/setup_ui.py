@@ -29,7 +29,8 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.setWindowIcon(QtGui.QIcon('Assets\\icon.ico'))
         self.setWindowTitle('Customers - Main Window')
 
-        self.auth_account = json.load(open('Assets/Tokens/Omega.json'))['client_email'].split('@')[0]
+        self.auth_account = json.load(open('Assets/token.json'))['client_email'].split('@')[0]
+        print(self.auth_account)
 
         # self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.loading = Loading()

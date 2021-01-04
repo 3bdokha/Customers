@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1241</width>
-    <height>901</height>
+    <width>1321</width>
+    <height>921</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -585,8 +585,8 @@ QTableWidget:item:selected
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>1221</width>
-        <height>881</height>
+        <width>1301</width>
+        <height>901</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
